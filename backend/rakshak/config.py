@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     osrm_enabled: bool = True
     osrm_url: str = "https://router.project-osrm.org"
     facilities_csv: str | None = None
+
+    # Demo / simulator wiring (dev only)
+    demo_tools: bool = False  # admin-only DB tamper + restore endpoints for the demo
+    simulator_url: str | None = None  # e.g. http://simulator:8100
+    simulator_token: str | None = None
     # A hub's offline gap is reported by the hub itself on reconnect (``offline_since``).
     ledger_backend: str = "local"
     ledger_path: str = "./data/ledger.jsonl"

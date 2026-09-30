@@ -6,8 +6,10 @@ import logging
 
 from fastapi import FastAPI
 
+from .api.routes import demo as demo_routes
 from .api.routes import ledger as ledger_routes
 from .api.routes import prediction as prediction_routes
+from .api.routes import simulator as simulator_routes
 from .ledger.anchor import Anchorer
 from .ledger.client import make_ledger
 from .ledger.verify import Verifier
@@ -25,6 +27,22 @@ def install_extensions(app: FastAPI) -> None:
     app.state.verifier = Verifier(app.state.db, ledger)
     app.state.ingestor.add_listener(app.state.anchorer.on_ingest)
     app.include_router(ledger_routes.router)
+
+    app.include_router(demo_routes.router)
+    app.include_router(simulator_routes.router)
+    app.state.simulator_client = None
+    if settings.simulator_url:
+        import httpx
+
+        headers = {"X-Sim-Token": settings.simulator_token} if settings.simulator_token else {}
+        app.state.simulator_client = httpx.AsyncClient(
+            base_url=settings.simulator_url.rstrip("/"), headers=headers, timeout=15
+        )
+
+        async def close_sim(_app: FastAPI) -> None:
+            await app.state.simulator_client.aclose()
+
+        app.state.shutdown_hooks.append(close_sim)
 
     app.state.predictor = None
     app.state.facilities = []

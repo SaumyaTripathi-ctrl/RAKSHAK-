@@ -36,7 +36,7 @@ test: test-py test-c test-fe
 
 test-py:
 	$(PY) tools/gen_vectors.py --check
-	$(PY) -m pytest backend/tests ml/tests simulator/tests -q
+	$(PY) -m pytest backend/tests ml/tests simulator/sim_tests -q
 
 test-c:
 	CC="$(CC)" sh firmware/common/test/run_host_test.sh

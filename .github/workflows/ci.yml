@@ -30,7 +30,7 @@ jobs:
       - name: Tests
         run: |
           dirs="backend/tests"
-          for d in ml/tests simulator/tests; do [ -d "$d" ] && dirs="$dirs $d"; done
+          for d in ml/tests simulator/sim_tests; do [ -d "$d" ] && dirs="$dirs $d"; done
           python -m pytest $dirs -q
 
   c-vectors:

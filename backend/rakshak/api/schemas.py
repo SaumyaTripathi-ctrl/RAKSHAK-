@@ -102,6 +102,7 @@ class DeviceOut(ORM):
     backlog: int
     offline_since: int | None
     last_seq: int | None
+    last_hash: str | None
 
 
 class ProvisioningOut(BaseModel):

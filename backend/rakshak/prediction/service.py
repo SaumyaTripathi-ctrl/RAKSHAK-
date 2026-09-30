@@ -119,6 +119,7 @@ class Tracker:
     fan_forced: bool = False
     reroute: dict | None = None
     reroute_accepted: str | None = None
+    reroute_pending: bool = False
     weather_lat: float | None = None
 
 
@@ -286,6 +287,11 @@ class PredictionService:
         feats = tr.engine.update(reading)
         pred = bundle.predict(feats)
         transition = tr.machine.update(pred.risk, float(t))
+        if transition is not None and transition.previous is Level.CRITICAL > transition.current:
+            tr.reroute, tr.reroute_accepted = (
+                None,
+                None,
+            )  # emergency over: the next one gets a fresh detour
         level = tr.machine.level
         tr.t_max = max(tr.t_max, t)
         why = drivers(feats, tr.band)
@@ -334,11 +340,9 @@ class PredictionService:
 
         if not historical:
             await self._steer(s, tr, shipment, level, feats, transition is not None)
-            if (
-                transition is not None
-                and transition.current is Level.CRITICAL
-                and transition.escalated
-            ):
+            if level is Level.CRITICAL and tr.reroute is None and not tr.reroute_pending:
+                # also covers CRITICAL reached while the hub was offline (that transition was historical)
+                tr.reroute_pending = True
                 self._spawn(self._auto_reroute(tr.shipment_id, pred.rsl_hours))
 
     def _transition_event(self, tr: Tracker, t, pred, why, at: int, historical: bool) -> Event:
@@ -500,6 +504,10 @@ class PredictionService:
             await self.compute_reroute(shipment_id, persist_event=True)
         except Exception:
             log.exception("reroute computation failed for %s", shipment_id)
+        finally:
+            tr = self.trackers.get(shipment_id)
+            if tr is not None:
+                tr.reroute_pending = False
 
     async def accept_reroute(
         self, shipment_id: str, facility_id: str, username: str

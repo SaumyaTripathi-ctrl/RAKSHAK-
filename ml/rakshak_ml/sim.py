@@ -131,134 +131,159 @@ class ShipmentSim:
         f_ripe = 1.0 + (1.0 * ripeness**3 if b.ethylene_producer else 0.0)
         return f_t * f_chill * f_rh * f_eth * f_ripe
 
+    # ---------------------------------------------------------------- stepping
+    def begin(self) -> None:
+        """Initialise the dynamic state (call once before ``step``; ``run`` does it for you)."""
+        r, b = self.rng, self.band
+        self.i = 0
+        self.temp = b.mid_temp + (r.normal(0, 0.5) if self.precooled else r.uniform(1, 4))
+        self.rh_ar = 0.0
+        self.ripeness = float(r.uniform(0.0, 0.15)) if b.ethylene_producer else 0.0
+        self.c = 0.0  # ethylene concentration (0-100 scale)
+        self.strip = 0.0
+        self.pcm_cap, self.scrub_cap = self.pcm_cap0, self.scrub_cap0
+        self.consumed = 0.0
+        self.amb_ar = 0.0
+        self.rain = float(r.uniform(0, 0.2))
+        self.t_pcm = b.min_temp - 3.0 if b.food_type != "milk" else b.min_temp - 1.5
+        # Live controls (used by the interactive device simulator; all neutral by default)
+        self.manual_heat_c = 0.0  # extra ambient degC (heat wave / failed cover)
+        self.manual_eth_units = 0.0  # extra ethylene source (mixed load), units per physical hour
+        self.manual_shock_g = 0.0  # one-shot shock, cleared by the next step
+        self.manual_spike_c = 0.0  # sensor-only reading offset (door open next to the sensor)
+
+    def step(self, flap: int, fan_on: bool) -> dict:
+        """Advance one step. ``flap`` (0/25/50/100) and ``fan_on`` are the actuator states in force during it."""
+        cfg, b, r = self.cfg, self.band, self.rng
+        i = self.i
+        dt_h = cfg.step_min / 60.0 * self.ts  # physical hours per step
+        life_h = b.nominal_shelf_life_h * self.life_mult
+        t_data_min = i * cfg.step_min
+        t_phys = i * dt_h
+        # --- environment
+        self.amb_ar = 0.9 * self.amb_ar + r.normal(0, 0.8)
+        ambient = (
+            self.base_ambient
+            + self.diurnal_amp * math.sin(2 * math.pi * (t_phys + self.phase_h) / 24.0)
+            + self.amb_ar
+        )
+        if cfg.ambient_override is not None:
+            ambient = cfg.ambient_override + 0.3 * self.amb_ar
+        in_exc, extra = self._excursion(t_phys)
+        in_exc = in_exc or self.manual_heat_c > 0
+        amb_eff = ambient + (extra if in_exc else 0.0) + self.manual_heat_c
+        tau = self.tau_h / (3.0 if in_exc else 1.0)
+        rh_amb = float(np.clip(75 - 1.5 * (ambient - 25) + r.normal(0, 4), 25, 95))
+
+        # --- crate temperature (the hub acts on the *previous* reading, like the firmware loop)
+        pcm_ok = self.has_pcm and self.pcm_cap > 0
+        flap_frac = flap / 100.0
+        resp = 0.4 * self.ripeness if b.ethylene_producer else 0.0
+        d_temp = (
+            (amb_eff - self.temp) / tau
+            - (flap_frac * (self.temp - self.t_pcm) / 4.0 if pcm_ok else 0.0)
+            + resp
+        )
+        self.temp = max(self.temp + d_temp * dt_h, self.t_pcm - 1.0)
+        if pcm_ok:
+            self.pcm_cap = max(
+                0.0, self.pcm_cap - flap_frac * max(self.temp - self.t_pcm, 0.0) * dt_h
+            )
+
+        # --- humidity inside the crate
+        self.rh_ar = 0.85 * self.rh_ar + r.normal(0, 1.5)
+        mid_rh = (b.min_rh + b.max_rh) / 2 if b.food_type != "milk" else 70.0
+        rh = float(
+            np.clip(
+                mid_rh - 1.2 * (self.temp - b.mid_temp) + 0.15 * (rh_amb - 70) + self.rh_ar,
+                20,
+                100,
+            )
+        )
+
+        # --- ripening + ethylene
+        prod = 0.3 + self.ext_eth + self.manual_eth_units
+        if b.ethylene_producer:
+            lam = (1.0 / RIPEN_TIME_H[b.food_type]) * 2 ** ((self.temp - 20.0) / 10.0)
+            lam *= 1.0 + (0.6 * self.c / 100.0 if b.ethylene_sensitive else 0.0)
+            self.ripeness = 1.0 - (1.0 - self.ripeness) * math.exp(-lam * dt_h)
+            prod += 50.0 * self.ripeness**1.5
+        scrub_k = 2.5 if (fan_on and self.has_scrubber and self.scrub_cap > 0) else 0.0
+        k = 0.5 + scrub_k
+        self.c = float(np.clip(_exp_relax(self.c, prod / k, k, dt_h), 0, 100))
+        if scrub_k:
+            self.scrub_cap = max(0.0, self.scrub_cap - self.c * dt_h)
+        self.strip = _exp_relax(self.strip, self.c, 1.0 / 0.4, dt_h)
+        eth_reading = float(np.clip(round(self.strip + r.normal(0, 1.0), 1), 0, 100))
+
+        # --- shocks
+        n_shock = int(r.poisson(self.road_rough * dt_h))
+        shock = 0.0
+        damage = 0.0
+        if n_shock:
+            mags = r.lognormal(math.log(0.12), 0.7, size=n_shock)
+            shock = float(round(mags.max(), 2))
+            damage = float(sum(0.004 * (m - 1.0) ** 2 for m in mags if m > 1.0))
+        if self.manual_shock_g > 0:
+            shock = max(shock, round(self.manual_shock_g, 2))
+            if self.manual_shock_g > 1.0:
+                damage += 0.004 * (self.manual_shock_g - 1.0) ** 2
+            self.manual_shock_g = 0.0
+
+        # --- ground truth
+        rf = self.rate_factor(self.temp, rh, self.c, self.ripeness)
+        self.consumed += rf * dt_h / life_h + damage
+        risk_true = 100.0 * float(
+            np.clip(self.consumed + 0.15 * np.clip((rf - 1.0) / 3.0, 0, 1), 0, 1)
+        )
+        rsl_phys = float(np.clip((1.0 - self.consumed) * life_h / max(rf, 0.05), 0.0, RSL_CAP_H))
+
+        # --- sensor readings the hub/tags would report
+        spike = sum(m for a, ln, m in self.spikes if a <= t_data_min < a + ln) + self.manual_spike_c
+        temp_reading = round(float(self.temp + spike + r.normal(0, 0.15)), 2)
+        self.rain = float(np.clip(self.rain + r.normal(0, 0.06), 0, 1))
+        row = {
+            "shipment_id": cfg.shipment_id,
+            "food_type": b.food_type,
+            "step": i,
+            "t_min": t_data_min,
+            "temperature": temp_reading,
+            "humidity": round(rh, 2),
+            "ethylene_index": eth_reading,
+            "shock_g": shock,
+            "external_temperature": round(float(ambient + r.normal(0, 0.5)), 2),
+            "external_humidity": round(rh_amb, 1),
+            "rain_probability": round(self.rain, 3),
+            "wind_speed": round(float(r.lognormal(math.log(8), 0.5)), 1),
+            "flap_position": flap,
+            "scrubber_on": int(fan_on and self.has_scrubber),
+            # labels / hidden state (never features)
+            "consumed": self.consumed,
+            "rate_factor": rf,
+            "ripeness": self.ripeness,
+            "risk_true": risk_true,
+            "rsl_true_h": rsl_phys / self.ts,
+            "in_excursion": int(in_exc),
+            "pcm_remaining": self.pcm_cap,
+            "scrubber_remaining": self.scrub_cap,
+        }
+        self.i += 1
+        return row
+
     # ---------------------------------------------------------------- run
     def run(self) -> list[dict]:
-        cfg, b, r = self.cfg, self.band, self.rng
-        step_min = cfg.step_min
-        n_steps = int(cfg.duration_h * 60 / step_min)
-        dt_h = step_min / 60.0 * self.ts  # physical hours per step
-        life_h = b.nominal_shelf_life_h * self.life_mult
-
-        temp = b.mid_temp + (r.normal(0, 0.5) if self.precooled else r.uniform(1, 4))
-        rh_ar = 0.0
-        ripeness = float(r.uniform(0.0, 0.15)) if b.ethylene_producer else 0.0
-        c = 0.0  # ethylene concentration (0-100 scale)
-        strip = 0.0
-        pcm_cap, scrub_cap = self.pcm_cap0, self.scrub_cap0
-        consumed = 0.0
-        amb_ar = 0.0
-        rain = float(r.uniform(0, 0.2))
+        """Batch mode: the hub's edge rules (flap by temperature, fan by ethylene trend) close the loop."""
+        cfg, b = self.cfg, self.band
+        n_steps = int(cfg.duration_h * 60 / cfg.step_min)
+        self.begin()
         fan = FanController()
-        flap = 0
-        fan_on = False
+        flap, fan_on = 0, False
         rows: list[dict] = []
-        t_pcm = b.min_temp - 3.0 if b.food_type != "milk" else b.min_temp - 1.5
-
-        for i in range(n_steps):
-            t_data_min = i * step_min
-            t_phys = i * dt_h
-            # --- environment
-            amb_ar = 0.9 * amb_ar + r.normal(0, 0.8)
-            ambient = (
-                self.base_ambient
-                + self.diurnal_amp * math.sin(2 * math.pi * (t_phys + self.phase_h) / 24.0)
-                + amb_ar
-            )
-            if cfg.ambient_override is not None:
-                ambient = cfg.ambient_override + 0.3 * amb_ar
-            in_exc, extra = self._excursion(t_phys)
-            amb_eff = ambient + (extra if in_exc else 0.0)
-            tau = self.tau_h / (3.0 if in_exc else 1.0)
-            rh_amb = float(np.clip(75 - 1.5 * (ambient - 25) + r.normal(0, 4), 25, 95))
-
-            # --- crate temperature (hub acts on the *previous* reading, like the firmware loop)
-            pcm_ok = self.has_pcm and pcm_cap > 0
-            flap_frac = flap / 100.0
-            resp = 0.4 * ripeness if b.ethylene_producer else 0.0
-            d_temp = (
-                (amb_eff - temp) / tau
-                - (flap_frac * (temp - t_pcm) / 4.0 if pcm_ok else 0.0)
-                + resp
-            )
-            temp = temp + d_temp * dt_h
-            temp = max(temp, t_pcm - 1.0)
-            if pcm_ok:
-                pcm_cap = max(0.0, pcm_cap - flap_frac * max(temp - t_pcm, 0.0) * dt_h)
-
-            # --- humidity inside the crate
-            rh_ar = 0.85 * rh_ar + r.normal(0, 1.5)
-            mid_rh = (b.min_rh + b.max_rh) / 2 if b.food_type != "milk" else 70.0
-            rh = float(
-                np.clip(mid_rh - 1.2 * (temp - b.mid_temp) + 0.15 * (rh_amb - 70) + rh_ar, 20, 100)
-            )
-
-            # --- ripening + ethylene
-            prod = 0.3 + self.ext_eth
-            if b.ethylene_producer:
-                lam = (1.0 / RIPEN_TIME_H[b.food_type]) * 2 ** ((temp - 20.0) / 10.0)
-                lam *= 1.0 + (0.6 * c / 100.0 if b.ethylene_sensitive else 0.0)
-                ripeness = 1.0 - (1.0 - ripeness) * math.exp(-lam * dt_h)
-                prod += 50.0 * ripeness**1.5
-            scrub_k = 2.5 if (fan_on and self.has_scrubber and scrub_cap > 0) else 0.0
-            k = 0.5 + scrub_k
-            c = float(np.clip(_exp_relax(c, prod / k, k, dt_h), 0, 100))
-            if scrub_k:
-                scrub_cap = max(0.0, scrub_cap - c * dt_h)
-            strip = _exp_relax(strip, c, 1.0 / 0.4, dt_h)
-            eth_reading = float(np.clip(round(strip + r.normal(0, 1.0), 1), 0, 100))
-
-            # --- shocks
-            n_shock = int(r.poisson(self.road_rough * dt_h))
-            shock = 0.0
-            damage = 0.0
-            if n_shock:
-                mags = r.lognormal(math.log(0.12), 0.7, size=n_shock)
-                shock = float(round(mags.max(), 2))
-                damage = float(sum(0.004 * (m - 1.0) ** 2 for m in mags if m > 1.0))
-
-            # --- ground truth
-            rf = self.rate_factor(temp, rh, c, ripeness)
-            consumed += rf * dt_h / life_h + damage
-            risk_true = 100.0 * float(
-                np.clip(consumed + 0.15 * np.clip((rf - 1.0) / 3.0, 0, 1), 0, 1)
-            )
-            rsl_phys = float(np.clip((1.0 - consumed) * life_h / max(rf, 0.05), 0.0, RSL_CAP_H))
-            rsl_true_h = rsl_phys / self.ts
-
-            # --- sensor readings the hub/tags would report
-            spike = sum(m for a, ln, m in self.spikes if a <= t_data_min < a + ln)
-            temp_reading = round(float(temp + spike + r.normal(0, 0.15)), 2)
-            rh_reading = round(rh, 2)
-            flap_next = flap_for_deviation(temp_reading, b.max_temp)
-            fan_next = fan.update(t_data_min, eth_reading) if self.has_scrubber else False
-
-            rain = float(np.clip(rain + r.normal(0, 0.06), 0, 1))
-            rows.append(
-                {
-                    "shipment_id": cfg.shipment_id,
-                    "food_type": b.food_type,
-                    "step": i,
-                    "t_min": t_data_min,
-                    "temperature": temp_reading,
-                    "humidity": rh_reading,
-                    "ethylene_index": eth_reading,
-                    "shock_g": shock,
-                    "external_temperature": round(float(ambient + r.normal(0, 0.5)), 2),
-                    "external_humidity": round(rh_amb, 1),
-                    "rain_probability": round(rain, 3),
-                    "wind_speed": round(float(r.lognormal(math.log(8), 0.5)), 1),
-                    "flap_position": flap,  # the flap position in force during this step
-                    "scrubber_on": int(fan_on and self.has_scrubber),
-                    # labels / hidden state (never features)
-                    "consumed": consumed,
-                    "rate_factor": rf,
-                    "ripeness": ripeness,
-                    "risk_true": risk_true,
-                    "rsl_true_h": rsl_true_h,
-                    "in_excursion": int(in_exc),
-                }
-            )
-            flap, fan_on = flap_next, fan_next
+        for _ in range(n_steps):
+            row = self.step(flap, fan_on)
+            rows.append(row)
+            flap = flap_for_deviation(row["temperature"], b.max_temp)
+            fan_on = fan.update(row["t_min"], row["ethylene_index"]) if self.has_scrubber else False
         return rows
 
 

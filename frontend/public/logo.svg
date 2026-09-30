@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Rakshak logo">
+  <title>Rakshak</title>
+  <!-- shield (protection = "raksha") -->
+  <path d="M32 3 55 11v19c0 15-9.6 26.2-23 31C18.6 56.2 9 45 9 30V11L32 3z" fill="#1F4E79"/>
+  <path d="M32 7.2 51 13.6V30c0 12.6-7.9 22.3-19 26.6C20.9 52.3 13 42.6 13 30V13.6L32 7.2z" fill="#ffffff" fill-opacity=".10"/>
+  <!-- leaf (produce) -->
+  <path d="M32 46c-9.5-3.2-14.6-10.6-13.6-21.6C26 24.5 31.5 28 32 36c.5-8 6-11.5 13.6-11.6C46.6 35.4 41.5 42.8 32 46z" fill="#2E7D32"/>
+  <path d="M32 44.5V30.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- chain of trust (hash chain) -->
+  <circle cx="22" cy="18.5" r="2.6" fill="#E87A1E"/>
+  <circle cx="32" cy="15.5" r="2.6" fill="#E87A1E"/>
+  <circle cx="42" cy="18.5" r="2.6" fill="#E87A1E"/>
+  <path d="M24.4 17.8 29.6 16.2M34.4 16.2l5.2 1.6" stroke="#E87A1E" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

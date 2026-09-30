@@ -65,6 +65,8 @@ async def send_command(
         created_at=utcnow(),
     )
     session.add(row)
+    # Commit before publishing: the hub's acknowledgement can come back faster than the caller's own commit.
+    await session.commit()
     payload = {
         "id": row.cmd_id,
         "cmd": cmd,
@@ -77,5 +79,5 @@ async def send_command(
     except Exception as exc:
         log.warning("command %s to %s not published: %s", cmd, hub_id, exc)
         row.status = "FAILED"
-    await session.flush()
+        await session.commit()
     return row
