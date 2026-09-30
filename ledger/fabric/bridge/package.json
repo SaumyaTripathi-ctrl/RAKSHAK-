@@ -1,0 +1,16 @@
+{
+  "name": "rakshak-fabric-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HTTP bridge between the Rakshak backend and a Hyperledger Fabric peer (EXPERIMENTAL)",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/server.test.js"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.0",
+    "@hyperledger/fabric-gateway": "^1.5.0"
+  },
+  "engines": { "node": ">=20" }
+}

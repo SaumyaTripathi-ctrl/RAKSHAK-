@@ -41,6 +41,27 @@ jobs:
       - name: Build and run host vector test
         run: CC=cc sh firmware/common/test/run_host_test.sh
 
+  ledger-fabric:
+    name: Fabric chaincode (go test) + bridge (node test) - no live network
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Chaincode
+        working-directory: ledger/fabric/chaincode
+        run: |
+          test -z "$(gofmt -l .)"
+          go vet ./...
+          go test ./...
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bridge
+        working-directory: ledger/fabric/bridge
+        run: node --test test/server.test.js
+
   compose:
     name: docker compose config
     runs-on: ubuntu-latest

@@ -71,6 +71,46 @@ class IngestResult:
 Listener = Callable[[IngestResult], Awaitable[None]]
 
 
+def record_columns(rec) -> dict:
+    """Query-friendly columns derived from a decoded record body (single source of truth: ingest
+    writes them, the verifier recomputes them to catch edits to displayed values)."""
+    cols: dict = {}
+    if isinstance(rec, TagSample):
+        cols.update(
+            temp_c=rec.temp_c,
+            rh_pct=rec.rh_pct,
+            ethylene_idx=rec.ethylene_idx,
+            lid_open=rec.lid_open,
+            batt_pct=rec.batt_pct,
+        )
+    elif isinstance(rec, HubSample):
+        cols.update(
+            temp_c=rec.temp_c,
+            rh_pct=rec.rh_pct,
+            shock_g=rec.shock_g,
+            flap_pct=rec.flap_pct,
+            fan_on=rec.fan_on,
+            lid_open=rec.lid_open,
+            batt_pct=rec.batt_pct,
+            alert_level=rec.alert_level,
+        )
+        if rec.gps_valid:
+            cols.update(lat=rec.lat, lon=rec.lon)
+    else:
+        cols.update(
+            event_code=rec.event_code,
+            batt_pct=rec.batt_pct,
+            lid_open=bool(rec.flags & codec_spec.TagFlags.LID_OPEN),
+        )
+    return cols
+
+
+COLUMN_NAMES = (
+    "temp_c", "rh_pct", "ethylene_idx", "shock_g", "lat", "lon", "flap_pct",
+    "fan_on", "lid_open", "batt_pct", "alert_level", "event_code",
+)  # fmt: skip
+
+
 def _record_to_dict(r: Record) -> dict:
     return {
         "id": r.id,
@@ -401,18 +441,8 @@ class Ingestor:
             chain_ok=not broken,
             body=decoded.body,
         )
-        if isinstance(rec, TagSample):
-            row.temp_c, row.rh_pct, row.ethylene_idx = rec.temp_c, rec.rh_pct, rec.ethylene_idx
-            row.lid_open, row.batt_pct = rec.lid_open, rec.batt_pct
-        elif isinstance(rec, HubSample):
-            row.temp_c, row.rh_pct, row.shock_g = rec.temp_c, rec.rh_pct, rec.shock_g
-            if rec.gps_valid:
-                row.lat, row.lon = rec.lat, rec.lon
-            row.flap_pct, row.fan_on, row.lid_open = rec.flap_pct, rec.fan_on, rec.lid_open
-            row.batt_pct, row.alert_level = rec.batt_pct, rec.alert_level
-        else:
-            row.event_code, row.batt_pct = rec.event_code, rec.batt_pct
-            row.lid_open = bool(rec.flags & codec_spec.TagFlags.LID_OPEN)
+        for name, value in record_columns(rec).items():
+            setattr(row, name, value)
         return row
 
     async def _handle_event_record(

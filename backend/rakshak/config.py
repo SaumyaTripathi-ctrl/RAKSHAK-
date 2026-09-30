@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     # A hub's offline gap is reported by the hub itself on reconnect (``offline_since``).
     ledger_backend: str = "local"
     ledger_path: str = "./data/ledger.jsonl"
+    fabric_bridge_url: str | None = None
     batch_size: int = 50  # records per Merkle batch
 
     @field_validator("master_key_hex")

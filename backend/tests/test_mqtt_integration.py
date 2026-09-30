@@ -11,6 +11,7 @@ import json
 import shutil
 import ssl
 import subprocess
+import uuid
 from pathlib import Path
 
 import aiomqtt
@@ -101,7 +102,7 @@ async def live_app(ca_file, tmp_path):
         database_url=f"sqlite+aiosqlite:///{tmp_path / 'it.db'}",
         mqtt_enabled=True,
         mqtt_ca_file=ca_file,
-        mqtt_client_id=f"rakshak-api-test-{tmp_path.name[-8:]}",
+        mqtt_client_id=f"rakshak-api-it-{uuid.uuid4().hex[:10]}",
     )
     app = create_app(settings)
     async with app.router.lifespan_context(app):
@@ -176,7 +177,7 @@ async def test_commands_reach_the_hub_over_mqtt(live_app, ca_file):
 
 async def test_persistent_session_queues_qos1_while_backend_is_down(ca_file, tmp_path):
     """The offline story in miniature: backend down -> hub publishes -> backend returns -> nothing lost."""
-    cid = f"rakshak-api-persist-{tmp_path.name[-8:]}"
+    cid = f"rakshak-api-persist-{uuid.uuid4().hex[:10]}"
     mk = lambda: create_app(  # noqa: E731
         make_settings(
             database_url=f"sqlite+aiosqlite:///{tmp_path / 'p.db'}",

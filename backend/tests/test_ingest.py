@@ -42,7 +42,7 @@ async def test_clean_stream_is_stored_and_verified(app):
     async with app.state.db.session_factory() as s:
         dev = await s.get(Device, "TAG-0001")
         assert dev.last_seq == 4 and dev.battery_pct == 90 and dev.last_seen_at is not None
-    assert await events(app) == []
+    assert [e for e in await events(app) if e.kind != "LEDGER_ANCHORED"] == []
 
 
 async def test_duplicate_delivery_is_dropped(app):

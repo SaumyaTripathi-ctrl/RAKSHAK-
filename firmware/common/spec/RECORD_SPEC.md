@@ -163,6 +163,24 @@ any key**, and the backend can pick the right key.
   `rakshak/{hub_id}/cmd` = JSON commands (`FLAP_SET`, `FAN_ON`, `FAN_OFF`, `ALERT_*`, `ACK_*`).
   The backend dedupes by `(device_id, seq)`.
 
-## 8. Merkle batches (Phase 3)
+## 8. Merkle batches and ledger entries
 
-Defined with the ledger; test vectors are added to `vectors.json` then.
+A **batch** is a contiguous `seq` run of one device's records inside one shipment (default 50 records,
+remainder flushed on hand-over / shipment close). Its **root** is an RFC 6962 Merkle tree over the records' chain
+hashes, in `seq` order:
+
+```
+leaf(h)    = SHA-256( 0x00 || h )            h = record hash (32 B)
+node(l, r) = SHA-256( 0x01 || l || r )
+MTH(D[n])  = node( MTH(D[0:k]), MTH(D[k:n]) )   k = largest power of two < n      (n = 1: the leaf)
+MTH({})    = SHA-256("")
+```
+
+The 0x00/0x01 prefixes make a leaf indistinguishable from an inner node; the unbalanced split needs no
+duplicated leaves. `vectors.json` -> `merkle` holds roots for 0..9 leaves and one inclusion proof
+(`backend/tests/test_merkle.py`). A proof is a list of `(sibling, side)` pairs; the verifier folds the leaf up
+the path and compares with the ledger root.
+
+Ledger entries (kinds `BATCH`, `HANDOVER`): see `backend/rakshak/ledger/client.py` and `ledger/README.md`.
+A `HANDOVER` entry carries `batches_root` = Merkle root over all batch roots of the shipment at that moment, so
+the signed custody event is bound to the entire sensor history up to it.

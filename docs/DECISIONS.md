@@ -55,3 +55,50 @@ image build). Reports/model cards are committed. Avoids LFS for a hackathon repo
 **D-013 License: MIT.** Simple, permissive; change if the team wants otherwise.
 
 **D-014 Python 3.11+ supported; developed on 3.12.** CI uses 3.11 (the approved target).
+
+## Phase 2 - backend core
+
+**D-020 Hub connectivity is reported by the hub, not inferred from wall-clock.** Device time may be
+accelerated (simulator) or unsynced, so "offline periods" come from the hub's own `status` message on reconnect
+(`offline_since`, `backlog`) and the MQTT last-will. Stored as `offline_segments` in device time.
+Alternative: compare `received_at` with record time (breaks under time acceleration).
+
+**D-021 Events derive from EVENT records, not from sample flags.** Firmware always emits an EVENT record for
+lid-open/shock/low-battery; sample flags are display-only, avoiding duplicate alerts.
+
+**D-022 Tampered-but-decryptable records are stored and flagged, not dropped.** BAD_HASH / CHAIN_BREAK records are
+kept (`hash_ok`/`chain_ok` false) for forensics and excluded from analytics; AES-GCM failures are rejected (nothing
+trustworthy to store) and raise `AUTH_FAILED`.
+
+**D-023 Hand-over signatures are server-side Ed25519** with a key derived (HKDF) from the master key and the
+username, applied only after the actor authenticated. A client-held key would need a mobile wallet; documented in
+LIMITATIONS. Hand-overs are also hash-chained per shipment.
+
+**D-024 Only admins mint device keys** (`POST /devices`, `rotate-key`); FPOs bind devices to shipments.
+
+**D-025 `PyJWT` + `bcrypt` directly** (not `python-jose`/`passlib`, which are unmaintained / break with bcrypt 4).
+
+**D-026 Schema:** the initial Alembic revision already contains the ledger tables (`batches`, hand-over
+columns) to keep one migration for the planned model; `create_all` is used only in dev/tests
+(`RAKSHAK_AUTO_CREATE_SCHEMA`), Docker runs `alembic upgrade head`.
+
+## Phase 3 - ledger
+
+**D-030 Python ledger code lives in `backend/rakshak/ledger/`; `ledger/` holds Fabric artefacts + docs.** The
+backend imports the Python code directly; splitting it into another package would add install friction for no gain.
+
+**D-031 RFC 6962 Merkle tree** (domain-separated leaves/nodes, unbalanced split) rather than duplicating the last
+leaf (second-preimage pitfalls); inclusion proofs and vectors included.
+
+**D-032 Batches are contiguous `seq` runs per device per shipment,** anchored every 50 records and flushed on
+hand-over/close. A gap in `seq` never gets bridged: records after a gap form their own batch, so a deleted record is
+always visible. A hand-over entry anchors `batches_root` (Merkle root of batch roots), binding custody to history.
+
+**D-033 `/verify` also re-decodes each body and compares displayed columns,** otherwise editing `temp_c` (what the UI
+shows) would not change any hash. Status is VERIFIED / PARTIAL (unanchored tail) / PENDING / TAMPERED /
+LEDGER_UNREACHABLE; `verified` is only true when everything anchored matches.
+
+**D-034 Fabric is optional and experimental:** chaincode (Go) whose logic sits in a shim-independent package with
+unit tests, plus a Node HTTP bridge (the official Gateway SDKs are Go/Node/Java, not Python). Pinned
+`fabric-contract-api-go` v1.2.2 because v2.2.x needs Go >= 1.26, newer than Fabric's chaincode build images. Not run
+against a live network (too heavy); labelled as such everywhere. Default = local ledger, labelled single-party.

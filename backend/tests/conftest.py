@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import asyncio
 import sys
+import tempfile
+import uuid
+from pathlib import Path
 
 import httpx
 import pytest
@@ -13,6 +16,9 @@ if sys.platform == "win32":  # aiomqtt needs a selector loop
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
+_TMP = Path(tempfile.mkdtemp(prefix="rakshak-tests-"))
+
+
 def make_settings(**kw) -> Settings:
     base = dict(
         database_url="sqlite+aiosqlite:///:memory:",
@@ -20,6 +26,8 @@ def make_settings(**kw) -> Settings:
         mqtt_enabled=False,
         log_level="WARNING",
         bcrypt_rounds=4,
+        ledger_path=str(_TMP / f"ledger-{uuid.uuid4().hex}.jsonl"),
+        batch_size=5,
     )
     base.update(kw)
     return Settings(**base)

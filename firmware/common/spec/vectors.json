@@ -34,6 +34,50 @@
       "key": "a65c2793c9b10c75a8e11b33ef0c7c308d3386277b850fe2299455689f5ea7aa"
     }
   ],
+  "merkle": {
+    "note": "RFC 6962 construction: leaf=SHA256(0x00||h), node=SHA256(0x01||l||r); leaves are sha256(bytes([i]))",
+    "leaves": [
+      "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",
+      "dbc1b4c900ffe48d575b5da5c638040125f65db0fe3e24494b76ea986457d986",
+      "084fed08b978af4d7d196a7446a86b58009e636b611db16211b65a9aadff29c5",
+      "e52d9c508c502347344d8c07ad91cbd6068afc75ff6292f062a09ca381c89e71",
+      "e77b9a9ae9e30b0dbdb6f510a264ef9de781501d7b6b92ae89eb059c5ab743db",
+      "67586e98fad27da0b9968bc039a1ef34c939b9b8e523a8bef89d478608c5ecf6",
+      "ca358758f6d27e6cf45272937977a748fd88391db679ceda7dc7bf1f005ee879",
+      "beead77994cf573341ec17b58bbf7eb34d2711c993c1d976b128b3188dc1829a"
+    ],
+    "roots": {
+      "0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "1": "d9de27625445003d8a9739a851e3ff8d41c0683630b4d63a88327a6aaa37c409",
+      "2": "604d540f09268b91672ab011394d5266ccd7d4484d0d109411a55848126a1b2c",
+      "3": "d1f13800048f5909d4043fc0c152f6643280cba608b672715e56ce159a20629f",
+      "4": "0dcc2b645c00dfa2338e1c7ac2c4b570beda5a476d58836e55e28bde55e6bee1",
+      "5": "6b313b611b40676b9e1dfd70c4503f2379f88f0f1c2740fb7e1cacc32c113465",
+      "6": "33d501ae67e6e5745c0aa49e3aff95130969b568208b07210c508caa5ff39b3c",
+      "7": "bee2275db16667589a4515f63e0d053a2fa602c1d9f9703e98920a5bdad59baf",
+      "8": "80e139b44c90f91edebec705cc7586c3d90f4bdadd49628d25c20d4b03419287",
+      "9": "aaba260cc2c4084b1d745f8817ad3d3350c5b005d8283bc3246396eee0ad9538"
+    },
+    "proof_case": {
+      "n": 7,
+      "index": 4,
+      "proof": [
+        {
+          "hash": "d43e0bc415d9fa5bd12e23ca3a797ee65a1aefc3abfcaf8c7c508341c4046536",
+          "side": "R"
+        },
+        {
+          "hash": "f00d6bcebbc5b0e3f18e3d219c0cbd80d08edd7de43b388f18196257ae4f1b8a",
+          "side": "R"
+        },
+        {
+          "hash": "0dcc2b645c00dfa2338e1c7ac2c4b570beda5a476d58836e55e28bde55e6bee1",
+          "side": "L"
+        }
+      ]
+    }
+  },
   "records": [
     {
       "name": "tag_0_first_genesis",
