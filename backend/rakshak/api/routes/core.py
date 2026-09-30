@@ -26,6 +26,15 @@ async def health(request: Request, session: Session) -> dict:
         "db": "ok",
         "mqtt": {"enabled": settings.mqtt_enabled, "connected": bool(bridge and bridge.connected)},
         "ledger": settings.ledger_backend,
+        "prediction": {
+            "enabled": settings.predictions_enabled,
+            "active": getattr(request.app.state, "predictor", None) is not None,
+            "profiles": (
+                request.app.state.predictor.registry.loaded_profiles()
+                if getattr(request.app.state, "predictor", None)
+                else []
+            ),
+        },
         "dev_secrets": settings.using_dev_secrets,
     }
 

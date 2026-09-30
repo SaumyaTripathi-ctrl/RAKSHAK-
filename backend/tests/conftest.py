@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import sys
 import tempfile
 import uuid
@@ -69,3 +70,33 @@ async def fpo(client):
 @pytest.fixture
 def anyio_backend():
     return "asyncio"
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def _ml_fingerprint() -> str:
+    h = hashlib.sha256()
+    for f in sorted((ROOT / "ml" / "rakshak_ml").rglob("*")):
+        if f.is_file() and f.suffix in (".py", ".json", ".csv") and "__pycache__" not in f.parts:
+            h.update(f.read_bytes())
+    return h.hexdigest()[:16]
+
+
+@pytest.fixture(scope="session")
+def models_dir() -> str:
+    """Quick-trained model pairs (simulated data), cached in .cache and rebuilt when the ML code changes."""
+    from rakshak_ml import train
+
+    out = ROOT / ".cache" / "test_models"
+    marker = out / "fingerprint.txt"
+    fp = _ml_fingerprint()
+    if not (
+        marker.exists()
+        and marker.read_text() == fp
+        and (out / "models" / "demo" / "meta.json").exists()
+    ):
+        rc = train.main(["--out", str(out), "--per-food", "30", "--stride", "6"])
+        assert rc == 0
+        marker.write_text(fp)
+    return str(out / "models")

@@ -1,0 +1,164 @@
+id,name,type,state,town,lat,lng,storage_min,storage_max,capacity_tonnes,free_tonnes,active,data_source
+SYN-0001,Ripening chamber #1 near Pune (SYNTHETIC),ripening_chamber,Maharashtra,Pune,18.54716,73.82023,15.0,22.0,29,6.2,True,synthetic
+SYN-0002,Multi-commodity cold store #2 near Pune (SYNTHETIC),cold_storage,Maharashtra,Pune,18.4209,73.98689,2.0,14.0,559,71.7,True,synthetic
+SYN-0003,Fruit & vegetable cold store #3 near Pune (SYNTHETIC),cold_storage,Maharashtra,Pune,18.58773,74.07356,10.0,14.0,261,28.7,False,synthetic
+SYN-0004,Ripening chamber #4 near Mumbai (SYNTHETIC),ripening_chamber,Maharashtra,Mumbai,19.09568,72.93394,15.0,22.0,38,12.2,True,synthetic
+SYN-0005,Chilled store (leafy greens / dairy) #5 near Mumbai (SYNTHETIC),cold_storage,Maharashtra,Mumbai,19.10135,72.84963,0.0,4.0,93,12.7,True,synthetic
+SYN-0006,Fruit & vegetable cold store #6 near Mumbai (SYNTHETIC),cold_storage,Maharashtra,Mumbai,19.31093,73.13355,10.0,14.0,797,290.5,False,synthetic
+SYN-0007,FPO pack-house pre-cooling room #7 near Mumbai (SYNTHETIC),fpo_packhouse,Maharashtra,Mumbai,19.27001,73.03703,8.0,16.0,53,30.2,True,synthetic
+SYN-0008,Ripening chamber #8 near Mumbai (SYNTHETIC),ripening_chamber,Maharashtra,Mumbai,19.26885,72.73428,15.0,22.0,73,41.4,False,synthetic
+SYN-0009,Multi-commodity cold store #9 near Mumbai (SYNTHETIC),cold_storage,Maharashtra,Mumbai,19.10904,72.81608,2.0,14.0,1407,779.8,True,synthetic
+SYN-0010,Multi-commodity cold store #10 near Mumbai (SYNTHETIC),cold_storage,Maharashtra,Mumbai,18.93887,72.79845,2.0,14.0,569,133.9,False,synthetic
+SYN-0011,Multi-commodity cold store #11 near Nashik (SYNTHETIC),cold_storage,Maharashtra,Nashik,19.99364,73.90112,2.0,14.0,721,380.4,False,synthetic
+SYN-0012,Fruit & vegetable cold store #12 near Nashik (SYNTHETIC),cold_storage,Maharashtra,Nashik,20.13381,73.89151,10.0,14.0,743,212.1,True,synthetic
+SYN-0013,Multi-commodity cold store #13 near Nashik (SYNTHETIC),cold_storage,Maharashtra,Nashik,19.982,73.75147,2.0,14.0,1348,126.0,True,synthetic
+SYN-0014,Chilled store (leafy greens / dairy) #14 near Nashik (SYNTHETIC),cold_storage,Maharashtra,Nashik,19.90463,73.91803,0.0,4.0,78,29.1,True,synthetic
+SYN-0015,Ripening chamber #15 near Nashik (SYNTHETIC),ripening_chamber,Maharashtra,Nashik,20.07729,73.76203,15.0,22.0,50,18.9,True,synthetic
+SYN-0016,Chilled store (leafy greens / dairy) #16 near Nashik (SYNTHETIC),cold_storage,Maharashtra,Nashik,19.89263,73.60014,0.0,4.0,120,13.0,True,synthetic
+SYN-0017,Multi-commodity cold store #17 near Nagpur (SYNTHETIC),cold_storage,Maharashtra,Nagpur,21.13311,79.01813,2.0,14.0,857,103.2,True,synthetic
+SYN-0018,FPO pack-house pre-cooling room #18 near Nagpur (SYNTHETIC),fpo_packhouse,Maharashtra,Nagpur,21.38202,79.0083,8.0,16.0,27,3.2,True,synthetic
+SYN-0019,Ripening chamber #19 near Nagpur (SYNTHETIC),ripening_chamber,Maharashtra,Nagpur,21.2199,79.22149,15.0,22.0,17,5.3,False,synthetic
+SYN-0020,Multi-commodity cold store #20 near Nagpur (SYNTHETIC),cold_storage,Maharashtra,Nagpur,21.1602,79.19827,2.0,14.0,357,174.1,True,synthetic
+SYN-0021,Fruit & vegetable cold store #21 near Nagpur (SYNTHETIC),cold_storage,Maharashtra,Nagpur,21.12605,79.04568,10.0,14.0,619,101.2,True,synthetic
+SYN-0022,Chilled store (leafy greens / dairy) #22 near Chhatrapati Sambhajinagar (SYNTHETIC),cold_storage,Maharashtra,Chhatrapati Sambhajinagar,19.83333,75.32219,0.0,4.0,61,11.7,True,synthetic
+SYN-0023,Ripening chamber #23 near Chhatrapati Sambhajinagar (SYNTHETIC),ripening_chamber,Maharashtra,Chhatrapati Sambhajinagar,19.77765,75.3626,15.0,22.0,66,24.7,True,synthetic
+SYN-0024,FPO pack-house pre-cooling room #24 near Chhatrapati Sambhajinagar (SYNTHETIC),fpo_packhouse,Maharashtra,Chhatrapati Sambhajinagar,19.79162,75.35571,8.0,16.0,45,4.0,True,synthetic
+SYN-0025,Fruit & vegetable cold store #25 near Chhatrapati Sambhajinagar (SYNTHETIC),cold_storage,Maharashtra,Chhatrapati Sambhajinagar,19.91269,75.24945,10.0,14.0,658,106.4,True,synthetic
+SYN-0026,Fruit & vegetable cold store #26 near Kolhapur (SYNTHETIC),cold_storage,Maharashtra,Kolhapur,16.64539,74.34414,10.0,14.0,557,214.4,True,synthetic
+SYN-0027,FPO pack-house pre-cooling room #27 near Kolhapur (SYNTHETIC),fpo_packhouse,Maharashtra,Kolhapur,16.72496,74.22288,8.0,16.0,59,7.6,True,synthetic
+SYN-0028,Fruit & vegetable cold store #28 near Kolhapur (SYNTHETIC),cold_storage,Maharashtra,Kolhapur,16.51665,74.40393,10.0,14.0,325,139.6,True,synthetic
+SYN-0029,Fruit & vegetable cold store #29 near Kolhapur (SYNTHETIC),cold_storage,Maharashtra,Kolhapur,16.61452,74.09711,10.0,14.0,782,445.5,True,synthetic
+SYN-0030,Multi-commodity cold store #30 near Kolhapur (SYNTHETIC),cold_storage,Maharashtra,Kolhapur,16.73964,74.33301,2.0,14.0,1148,453.3,True,synthetic
+SYN-0031,Multi-commodity cold store #31 near Satara (SYNTHETIC),cold_storage,Maharashtra,Satara,17.73842,73.81789,2.0,14.0,403,217.7,False,synthetic
+SYN-0032,Ripening chamber #32 near Satara (SYNTHETIC),ripening_chamber,Maharashtra,Satara,17.57126,74.09733,15.0,22.0,78,33.2,True,synthetic
+SYN-0033,FPO pack-house pre-cooling room #33 near Satara (SYNTHETIC),fpo_packhouse,Maharashtra,Satara,17.64579,74.0664,8.0,16.0,57,29.0,True,synthetic
+SYN-0034,Multi-commodity cold store #34 near Satara (SYNTHETIC),cold_storage,Maharashtra,Satara,17.73358,74.05274,2.0,14.0,507,26.7,True,synthetic
+SYN-0035,Chilled store (leafy greens / dairy) #35 near Satara (SYNTHETIC),cold_storage,Maharashtra,Satara,17.62323,73.84011,0.0,4.0,35,14.1,True,synthetic
+SYN-0036,Multi-commodity cold store #36 near Satara (SYNTHETIC),cold_storage,Maharashtra,Satara,17.63872,74.15433,2.0,14.0,616,101.4,True,synthetic
+SYN-0037,Multi-commodity cold store #37 near Satara (SYNTHETIC),cold_storage,Maharashtra,Satara,17.50249,73.95872,2.0,14.0,1229,686.5,True,synthetic
+SYN-0038,Fruit & vegetable cold store #38 near Sangli (SYNTHETIC),cold_storage,Maharashtra,Sangli,16.69838,74.50087,10.0,14.0,680,207.9,True,synthetic
+SYN-0039,Multi-commodity cold store #39 near Sangli (SYNTHETIC),cold_storage,Maharashtra,Sangli,16.87404,74.37892,2.0,14.0,1162,556.9,True,synthetic
+SYN-0040,Multi-commodity cold store #40 near Sangli (SYNTHETIC),cold_storage,Maharashtra,Sangli,16.86481,74.47623,2.0,14.0,159,46.1,True,synthetic
+SYN-0041,Fruit & vegetable cold store #41 near Ratnagiri (SYNTHETIC),cold_storage,Maharashtra,Ratnagiri,16.87947,73.39936,10.0,14.0,714,333.3,True,synthetic
+SYN-0042,Fruit & vegetable cold store #42 near Ratnagiri (SYNTHETIC),cold_storage,Maharashtra,Ratnagiri,16.90753,73.29285,10.0,14.0,725,384.4,True,synthetic
+SYN-0043,Ripening chamber #43 near Ratnagiri (SYNTHETIC),ripening_chamber,Maharashtra,Ratnagiri,17.14063,73.30574,15.0,22.0,41,7.3,True,synthetic
+SYN-0044,FPO pack-house pre-cooling room #44 near Ratnagiri (SYNTHETIC),fpo_packhouse,Maharashtra,Ratnagiri,16.92294,73.32376,8.0,16.0,47,23.9,True,synthetic
+SYN-0045,Fruit & vegetable cold store #45 near Ratnagiri (SYNTHETIC),cold_storage,Maharashtra,Ratnagiri,17.00963,73.19238,10.0,14.0,722,304.0,True,synthetic
+SYN-0046,FPO pack-house pre-cooling room #46 near Ratnagiri (SYNTHETIC),fpo_packhouse,Maharashtra,Ratnagiri,16.89091,73.22561,8.0,16.0,12,4.2,True,synthetic
+SYN-0047,Multi-commodity cold store #47 near Ratnagiri (SYNTHETIC),cold_storage,Maharashtra,Ratnagiri,17.03752,73.31892,2.0,14.0,1197,706.7,True,synthetic
+SYN-0048,Chilled store (leafy greens / dairy) #48 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.68352,73.61445,0.0,4.0,111,27.5,True,synthetic
+SYN-0049,Multi-commodity cold store #49 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.48653,73.37772,2.0,14.0,367,209.8,True,synthetic
+SYN-0050,Fruit & vegetable cold store #50 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.6058,73.26107,10.0,14.0,536,51.4,True,synthetic
+SYN-0051,Fruit & vegetable cold store #51 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.45559,73.27246,10.0,14.0,524,96.1,True,synthetic
+SYN-0052,Fruit & vegetable cold store #52 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.67879,73.66815,10.0,14.0,546,257.3,True,synthetic
+SYN-0053,Fruit & vegetable cold store #53 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.59153,73.57068,10.0,14.0,698,138.1,True,synthetic
+SYN-0054,Fruit & vegetable cold store #54 near Chiplun (SYNTHETIC),cold_storage,Maharashtra,Chiplun,17.55783,73.71284,10.0,14.0,203,69.8,True,synthetic
+SYN-0055,Multi-commodity cold store #55 near Solapur (SYNTHETIC),cold_storage,Maharashtra,Solapur,17.55829,75.86401,2.0,14.0,1480,746.4,True,synthetic
+SYN-0056,Fruit & vegetable cold store #56 near Solapur (SYNTHETIC),cold_storage,Maharashtra,Solapur,17.37884,75.93577,10.0,14.0,330,120.8,True,synthetic
+SYN-0057,FPO pack-house pre-cooling room #57 near Solapur (SYNTHETIC),fpo_packhouse,Maharashtra,Solapur,17.8396,75.94421,8.0,16.0,28,2.8,True,synthetic
+SYN-0058,Multi-commodity cold store #58 near Solapur (SYNTHETIC),cold_storage,Maharashtra,Solapur,17.66823,75.99866,2.0,14.0,972,573.9,True,synthetic
+SYN-0059,Fruit & vegetable cold store #59 near Solapur (SYNTHETIC),cold_storage,Maharashtra,Solapur,17.67586,75.92118,10.0,14.0,351,124.9,True,synthetic
+SYN-0060,Ripening chamber #60 near Solapur (SYNTHETIC),ripening_chamber,Maharashtra,Solapur,17.76678,75.90419,15.0,22.0,40,10.4,True,synthetic
+SYN-0061,Multi-commodity cold store #61 near Jalgaon (SYNTHETIC),cold_storage,Maharashtra,Jalgaon,20.97823,75.62703,2.0,14.0,1308,679.2,True,synthetic
+SYN-0062,Ripening chamber #62 near Jalgaon (SYNTHETIC),ripening_chamber,Maharashtra,Jalgaon,20.97308,75.49616,15.0,22.0,10,5.9,True,synthetic
+SYN-0063,Chilled store (leafy greens / dairy) #63 near Jalgaon (SYNTHETIC),cold_storage,Maharashtra,Jalgaon,20.80849,75.48822,0.0,4.0,145,42.1,True,synthetic
+SYN-0064,Fruit & vegetable cold store #64 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,18.89043,74.93457,10.0,14.0,133,45.4,True,synthetic
+SYN-0065,Fruit & vegetable cold store #65 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,19.05429,74.76842,10.0,14.0,161,84.8,True,synthetic
+SYN-0066,Chilled store (leafy greens / dairy) #66 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,19.14945,74.83538,0.0,4.0,48,5.6,True,synthetic
+SYN-0067,Chilled store (leafy greens / dairy) #67 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,18.94163,74.76097,0.0,4.0,127,26.8,True,synthetic
+SYN-0068,Multi-commodity cold store #68 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,18.89804,74.78747,2.0,14.0,438,71.6,True,synthetic
+SYN-0069,Multi-commodity cold store #69 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,19.04462,74.89669,2.0,14.0,938,204.8,True,synthetic
+SYN-0070,Fruit & vegetable cold store #70 near Ahmednagar (SYNTHETIC),cold_storage,Maharashtra,Ahmednagar,19.10094,74.98759,10.0,14.0,611,348.0,True,synthetic
+SYN-0071,Chilled store (leafy greens / dairy) #71 near Dhule (SYNTHETIC),cold_storage,Maharashtra,Dhule,20.71617,74.57427,0.0,4.0,124,28.1,True,synthetic
+SYN-0072,Multi-commodity cold store #72 near Dhule (SYNTHETIC),cold_storage,Maharashtra,Dhule,21.03381,74.73286,2.0,14.0,792,214.9,True,synthetic
+SYN-0073,Multi-commodity cold store #73 near Dhule (SYNTHETIC),cold_storage,Maharashtra,Dhule,20.82649,74.90169,2.0,14.0,1241,290.0,True,synthetic
+SYN-0074,FPO pack-house pre-cooling room #74 near Dhule (SYNTHETIC),fpo_packhouse,Maharashtra,Dhule,21.05118,74.75473,8.0,16.0,40,10.8,True,synthetic
+SYN-0075,Multi-commodity cold store #75 near Dhule (SYNTHETIC),cold_storage,Maharashtra,Dhule,20.79037,74.98494,2.0,14.0,787,40.9,True,synthetic
+SYN-0076,Ripening chamber #76 near Dhule (SYNTHETIC),ripening_chamber,Maharashtra,Dhule,21.21003,74.71699,15.0,22.0,33,6.5,True,synthetic
+SYN-0077,Ripening chamber #77 near Dhule (SYNTHETIC),ripening_chamber,Maharashtra,Dhule,20.90002,74.92985,15.0,22.0,28,11.4,True,synthetic
+SYN-0078,Fruit & vegetable cold store #78 near Alibag (SYNTHETIC),cold_storage,Maharashtra,Alibag,18.51588,72.81688,10.0,14.0,134,28.2,False,synthetic
+SYN-0079,Fruit & vegetable cold store #79 near Alibag (SYNTHETIC),cold_storage,Maharashtra,Alibag,18.47455,72.71282,10.0,14.0,756,137.7,True,synthetic
+SYN-0080,Multi-commodity cold store #80 near Alibag (SYNTHETIC),cold_storage,Maharashtra,Alibag,18.68337,72.92129,2.0,14.0,1108,419.5,True,synthetic
+SYN-0081,Multi-commodity cold store #81 near Alibag (SYNTHETIC),cold_storage,Maharashtra,Alibag,18.57436,72.91596,2.0,14.0,1299,464.1,False,synthetic
+SYN-0082,Chilled store (leafy greens / dairy) #82 near Alibag (SYNTHETIC),cold_storage,Maharashtra,Alibag,18.65559,72.78244,0.0,4.0,55,26.7,True,synthetic
+SYN-0083,FPO pack-house pre-cooling room #83 near Kudal (SYNTHETIC),fpo_packhouse,Maharashtra,Kudal,15.86515,73.86155,8.0,16.0,48,23.4,True,synthetic
+SYN-0084,Chilled store (leafy greens / dairy) #84 near Kudal (SYNTHETIC),cold_storage,Maharashtra,Kudal,15.99481,73.83394,0.0,4.0,51,10.0,True,synthetic
+SYN-0085,Ripening chamber #85 near Kudal (SYNTHETIC),ripening_chamber,Maharashtra,Kudal,16.16379,73.5569,15.0,22.0,30,9.8,True,synthetic
+SYN-0086,Fruit & vegetable cold store #86 near Kudal (SYNTHETIC),cold_storage,Maharashtra,Kudal,15.85831,73.72838,10.0,14.0,223,51.8,True,synthetic
+SYN-0087,FPO pack-house pre-cooling room #87 near Kudal (SYNTHETIC),fpo_packhouse,Maharashtra,Kudal,16.27535,73.74388,8.0,16.0,19,10.4,True,synthetic
+SYN-0088,Ripening chamber #88 near Kudal (SYNTHETIC),ripening_chamber,Maharashtra,Kudal,15.90443,73.85553,15.0,22.0,72,29.4,False,synthetic
+SYN-0089,FPO pack-house pre-cooling room #89 near Kudal (SYNTHETIC),fpo_packhouse,Maharashtra,Kudal,16.05122,73.88227,8.0,16.0,39,9.0,True,synthetic
+SYN-0090,Multi-commodity cold store #90 near Ahmedabad (SYNTHETIC),cold_storage,Gujarat,Ahmedabad,23.13511,72.61034,2.0,14.0,209,39.0,True,synthetic
+SYN-0091,Fruit & vegetable cold store #91 near Ahmedabad (SYNTHETIC),cold_storage,Gujarat,Ahmedabad,22.85419,72.4945,10.0,14.0,589,39.2,True,synthetic
+SYN-0092,Multi-commodity cold store #92 near Ahmedabad (SYNTHETIC),cold_storage,Gujarat,Ahmedabad,22.96309,72.6847,2.0,14.0,1065,575.4,True,synthetic
+SYN-0093,Fruit & vegetable cold store #93 near Anand (SYNTHETIC),cold_storage,Gujarat,Anand,22.64608,72.86846,10.0,14.0,121,36.8,True,synthetic
+SYN-0094,Ripening chamber #94 near Anand (SYNTHETIC),ripening_chamber,Gujarat,Anand,22.61729,72.94044,15.0,22.0,28,9.5,True,synthetic
+SYN-0095,Fruit & vegetable cold store #95 near Anand (SYNTHETIC),cold_storage,Gujarat,Anand,22.58835,72.80393,10.0,14.0,674,360.3,True,synthetic
+SYN-0096,Fruit & vegetable cold store #96 near Anand (SYNTHETIC),cold_storage,Gujarat,Anand,22.26252,73.07218,10.0,14.0,374,215.0,True,synthetic
+SYN-0097,FPO pack-house pre-cooling room #97 near Anand (SYNTHETIC),fpo_packhouse,Gujarat,Anand,22.58201,72.82106,8.0,16.0,34,2.3,True,synthetic
+SYN-0098,FPO pack-house pre-cooling room #98 near Anand (SYNTHETIC),fpo_packhouse,Gujarat,Anand,22.55399,73.1927,8.0,16.0,24,1.6,True,synthetic
+SYN-0099,Multi-commodity cold store #99 near Anand (SYNTHETIC),cold_storage,Gujarat,Anand,22.56352,73.08934,2.0,14.0,580,252.2,True,synthetic
+SYN-0100,Multi-commodity cold store #100 near Vadodara (SYNTHETIC),cold_storage,Gujarat,Vadodara,22.20203,73.26975,2.0,14.0,911,381.2,True,synthetic
+SYN-0101,Multi-commodity cold store #101 near Vadodara (SYNTHETIC),cold_storage,Gujarat,Vadodara,22.32933,73.23302,2.0,14.0,1453,258.4,True,synthetic
+SYN-0102,Fruit & vegetable cold store #102 near Vadodara (SYNTHETIC),cold_storage,Gujarat,Vadodara,22.24978,73.37784,10.0,14.0,490,122.5,True,synthetic
+SYN-0103,Multi-commodity cold store #103 near Surat (SYNTHETIC),cold_storage,Gujarat,Surat,20.94783,72.81267,2.0,14.0,401,36.7,True,synthetic
+SYN-0104,Multi-commodity cold store #104 near Surat (SYNTHETIC),cold_storage,Gujarat,Surat,21.03864,72.91582,2.0,14.0,205,95.6,True,synthetic
+SYN-0105,Fruit & vegetable cold store #105 near Surat (SYNTHETIC),cold_storage,Gujarat,Surat,21.17858,73.01233,10.0,14.0,509,256.3,True,synthetic
+SYN-0106,Chilled store (leafy greens / dairy) #106 near Surat (SYNTHETIC),cold_storage,Gujarat,Surat,21.25922,72.93544,0.0,4.0,36,17.9,True,synthetic
+SYN-0107,FPO pack-house pre-cooling room #107 near Surat (SYNTHETIC),fpo_packhouse,Gujarat,Surat,21.45757,72.73993,8.0,16.0,49,14.4,True,synthetic
+SYN-0108,Chilled store (leafy greens / dairy) #108 near Rajkot (SYNTHETIC),cold_storage,Gujarat,Rajkot,22.25076,70.75185,0.0,4.0,145,36.6,True,synthetic
+SYN-0109,Ripening chamber #109 near Rajkot (SYNTHETIC),ripening_chamber,Gujarat,Rajkot,22.28903,70.51421,15.0,22.0,45,24.3,True,synthetic
+SYN-0110,Multi-commodity cold store #110 near Rajkot (SYNTHETIC),cold_storage,Gujarat,Rajkot,22.13853,70.69529,2.0,14.0,1338,473.2,True,synthetic
+SYN-0111,Ripening chamber #111 near Rajkot (SYNTHETIC),ripening_chamber,Gujarat,Rajkot,22.22919,70.9034,15.0,22.0,22,6.2,True,synthetic
+SYN-0112,FPO pack-house pre-cooling room #112 near Rajkot (SYNTHETIC),fpo_packhouse,Gujarat,Rajkot,22.41467,70.74843,8.0,16.0,37,4.0,True,synthetic
+SYN-0113,FPO pack-house pre-cooling room #113 near Rajkot (SYNTHETIC),fpo_packhouse,Gujarat,Rajkot,22.20435,70.85521,8.0,16.0,52,15.7,True,synthetic
+SYN-0114,Fruit & vegetable cold store #114 near Mehsana (SYNTHETIC),cold_storage,Gujarat,Mehsana,23.65555,72.35222,10.0,14.0,559,220.4,False,synthetic
+SYN-0115,Fruit & vegetable cold store #115 near Mehsana (SYNTHETIC),cold_storage,Gujarat,Mehsana,23.60346,72.44598,10.0,14.0,223,57.6,True,synthetic
+SYN-0116,Chilled store (leafy greens / dairy) #116 near Mehsana (SYNTHETIC),cold_storage,Gujarat,Mehsana,23.60399,72.33352,0.0,4.0,62,36.9,True,synthetic
+SYN-0117,Multi-commodity cold store #117 near Mehsana (SYNTHETIC),cold_storage,Gujarat,Mehsana,23.68492,72.31564,2.0,14.0,895,50.2,True,synthetic
+SYN-0118,Multi-commodity cold store #118 near Mehsana (SYNTHETIC),cold_storage,Gujarat,Mehsana,23.81365,72.33729,2.0,14.0,470,159.9,True,synthetic
+SYN-0119,Ripening chamber #119 near Mehsana (SYNTHETIC),ripening_chamber,Gujarat,Mehsana,23.51411,72.15427,15.0,22.0,11,5.7,False,synthetic
+SYN-0120,FPO pack-house pre-cooling room #120 near Junagadh (SYNTHETIC),fpo_packhouse,Gujarat,Junagadh,21.51872,70.51315,8.0,16.0,23,11.6,True,synthetic
+SYN-0121,Fruit & vegetable cold store #121 near Junagadh (SYNTHETIC),cold_storage,Gujarat,Junagadh,21.51346,70.49037,10.0,14.0,321,142.2,True,synthetic
+SYN-0122,Fruit & vegetable cold store #122 near Junagadh (SYNTHETIC),cold_storage,Gujarat,Junagadh,21.69894,70.55362,10.0,14.0,357,67.2,True,synthetic
+SYN-0123,Multi-commodity cold store #123 near Junagadh (SYNTHETIC),cold_storage,Gujarat,Junagadh,21.60913,70.37282,2.0,14.0,964,127.7,True,synthetic
+SYN-0124,FPO pack-house pre-cooling room #124 near Bhavnagar (SYNTHETIC),fpo_packhouse,Gujarat,Bhavnagar,21.69464,72.12477,8.0,16.0,45,11.6,True,synthetic
+SYN-0125,Multi-commodity cold store #125 near Bhavnagar (SYNTHETIC),cold_storage,Gujarat,Bhavnagar,21.72731,72.17186,2.0,14.0,109,51.9,True,synthetic
+SYN-0126,Multi-commodity cold store #126 near Bhavnagar (SYNTHETIC),cold_storage,Gujarat,Bhavnagar,21.67553,72.12653,2.0,14.0,555,187.5,True,synthetic
+SYN-0127,Fruit & vegetable cold store #127 near Bhavnagar (SYNTHETIC),cold_storage,Gujarat,Bhavnagar,21.44235,72.25501,10.0,14.0,396,175.4,True,synthetic
+SYN-0128,Fruit & vegetable cold store #128 near Bhavnagar (SYNTHETIC),cold_storage,Gujarat,Bhavnagar,21.78499,71.97379,10.0,14.0,265,30.7,True,synthetic
+SYN-0129,Multi-commodity cold store #129 near Bhavnagar (SYNTHETIC),cold_storage,Gujarat,Bhavnagar,21.96617,72.19376,2.0,14.0,337,143.7,True,synthetic
+SYN-0130,FPO pack-house pre-cooling room #130 near Bhavnagar (SYNTHETIC),fpo_packhouse,Gujarat,Bhavnagar,21.80505,72.11583,8.0,16.0,45,10.7,True,synthetic
+SYN-0131,Fruit & vegetable cold store #131 near Bengaluru (SYNTHETIC),cold_storage,Karnataka,Bengaluru,13.06361,77.61746,10.0,14.0,95,33.4,True,synthetic
+SYN-0132,Chilled store (leafy greens / dairy) #132 near Bengaluru (SYNTHETIC),cold_storage,Karnataka,Bengaluru,12.94371,77.74846,0.0,4.0,82,8.7,True,synthetic
+SYN-0133,FPO pack-house pre-cooling room #133 near Bengaluru (SYNTHETIC),fpo_packhouse,Karnataka,Bengaluru,12.99759,77.60897,8.0,16.0,54,31.9,True,synthetic
+SYN-0134,Fruit & vegetable cold store #134 near Bengaluru (SYNTHETIC),cold_storage,Karnataka,Bengaluru,12.85946,77.32674,10.0,14.0,384,55.1,True,synthetic
+SYN-0135,Chilled store (leafy greens / dairy) #135 near Bengaluru (SYNTHETIC),cold_storage,Karnataka,Bengaluru,12.94584,77.56011,0.0,4.0,43,14.1,True,synthetic
+SYN-0136,FPO pack-house pre-cooling room #136 near Belagavi (SYNTHETIC),fpo_packhouse,Karnataka,Belagavi,15.87819,74.49653,8.0,16.0,15,2.2,True,synthetic
+SYN-0137,Ripening chamber #137 near Belagavi (SYNTHETIC),ripening_chamber,Karnataka,Belagavi,15.90224,74.42903,15.0,22.0,32,3.3,True,synthetic
+SYN-0138,Multi-commodity cold store #138 near Belagavi (SYNTHETIC),cold_storage,Karnataka,Belagavi,16.03735,74.64513,2.0,14.0,659,230.7,True,synthetic
+SYN-0139,Fruit & vegetable cold store #139 near Belagavi (SYNTHETIC),cold_storage,Karnataka,Belagavi,15.90818,74.74194,10.0,14.0,472,215.5,True,synthetic
+SYN-0140,Multi-commodity cold store #140 near Belagavi (SYNTHETIC),cold_storage,Karnataka,Belagavi,15.745,74.58614,2.0,14.0,344,47.5,True,synthetic
+SYN-0141,Chilled store (leafy greens / dairy) #141 near Belagavi (SYNTHETIC),cold_storage,Karnataka,Belagavi,15.94405,74.32699,0.0,4.0,162,59.0,True,synthetic
+SYN-0142,Fruit & vegetable cold store #142 near Hubballi (SYNTHETIC),cold_storage,Karnataka,Hubballi,15.50155,75.10791,10.0,14.0,545,139.3,True,synthetic
+SYN-0143,Fruit & vegetable cold store #143 near Hubballi (SYNTHETIC),cold_storage,Karnataka,Hubballi,15.54396,75.26266,10.0,14.0,704,114.3,True,synthetic
+SYN-0144,Fruit & vegetable cold store #144 near Hubballi (SYNTHETIC),cold_storage,Karnataka,Hubballi,15.16967,75.24651,10.0,14.0,275,151.0,True,synthetic
+SYN-0145,Multi-commodity cold store #145 near Hubballi (SYNTHETIC),cold_storage,Karnataka,Hubballi,15.3487,75.12169,2.0,14.0,1141,352.9,False,synthetic
+SYN-0146,Fruit & vegetable cold store #146 near Hubballi (SYNTHETIC),cold_storage,Karnataka,Hubballi,15.33245,74.88307,10.0,14.0,673,297.5,True,synthetic
+SYN-0147,Fruit & vegetable cold store #147 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.21092,76.52885,10.0,14.0,604,299.2,False,synthetic
+SYN-0148,Multi-commodity cold store #148 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.43542,76.83399,2.0,14.0,1323,179.6,True,synthetic
+SYN-0149,Fruit & vegetable cold store #149 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.2788,76.56283,10.0,14.0,497,74.5,True,synthetic
+SYN-0150,Fruit & vegetable cold store #150 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.16717,76.93521,10.0,14.0,611,149.4,False,synthetic
+SYN-0151,Fruit & vegetable cold store #151 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.4284,76.5271,10.0,14.0,593,111.5,True,synthetic
+SYN-0152,Multi-commodity cold store #152 near Mysuru (SYNTHETIC),cold_storage,Karnataka,Mysuru,12.25052,76.72222,2.0,14.0,1265,743.8,True,synthetic
+SYN-0153,Ripening chamber #153 near Kolar (SYNTHETIC),ripening_chamber,Karnataka,Kolar,13.11079,78.01063,15.0,22.0,63,4.4,True,synthetic
+SYN-0154,Multi-commodity cold store #154 near Kolar (SYNTHETIC),cold_storage,Karnataka,Kolar,13.07544,78.15765,2.0,14.0,1159,80.6,True,synthetic
+SYN-0155,FPO pack-house pre-cooling room #155 near Kolar (SYNTHETIC),fpo_packhouse,Karnataka,Kolar,13.03646,78.3634,8.0,16.0,47,11.3,True,synthetic
+SYN-0156,Multi-commodity cold store #156 near Kolar (SYNTHETIC),cold_storage,Karnataka,Kolar,12.98965,78.1738,2.0,14.0,726,410.2,True,synthetic
+SYN-0157,Fruit & vegetable cold store #157 near Indore (SYNTHETIC),cold_storage,Madhya Pradesh,Indore,22.7279,75.87087,10.0,14.0,597,41.6,True,synthetic
+SYN-0158,Chilled store (leafy greens / dairy) #158 near Indore (SYNTHETIC),cold_storage,Madhya Pradesh,Indore,22.75202,76.14085,0.0,4.0,130,16.1,True,synthetic
+SYN-0159,FPO pack-house pre-cooling room #159 near Indore (SYNTHETIC),fpo_packhouse,Madhya Pradesh,Indore,22.89803,75.99802,8.0,16.0,56,26.3,True,synthetic
+SYN-0160,Multi-commodity cold store #160 near Indore (SYNTHETIC),cold_storage,Madhya Pradesh,Indore,22.76532,75.72863,2.0,14.0,306,106.8,True,synthetic
+SYN-0161,Chilled store (leafy greens / dairy) #161 near Hyderabad (SYNTHETIC),cold_storage,Telangana,Hyderabad,17.31406,78.36116,0.0,4.0,170,97.8,True,synthetic
+SYN-0162,Fruit & vegetable cold store #162 near Hyderabad (SYNTHETIC),cold_storage,Telangana,Hyderabad,17.50936,78.60974,10.0,14.0,798,78.4,True,synthetic
+SYN-0163,Fruit & vegetable cold store #163 near Hyderabad (SYNTHETIC),cold_storage,Telangana,Hyderabad,17.48608,78.41337,10.0,14.0,507,143.9,True,synthetic

@@ -102,3 +102,57 @@ LEDGER_UNREACHABLE; `verified` is only true when everything anchored matches.
 unit tests, plus a Node HTTP bridge (the official Gateway SDKs are Go/Node/Java, not Python). Pinned
 `fabric-contract-api-go` v1.2.2 because v2.2.x needs Go >= 1.26, newer than Fabric's chaincode build images. Not run
 against a live network (too heavy); labelled as such everywhere. Default = local ledger, labelled single-party.
+
+## Phase 4 - ML, prediction, rerouting
+
+**D-040 Everything the models learn from is simulated, and says so.** `rakshak_ml/sim.py` generates shipments
+(diurnal ambient, heat excursions, thermal lag, PCM cooling with depletion, autocatalytic ripening, ethylene with a
+scrubber, shocks, sensor-only reading spikes). The label is the simulator's own hidden quality model, so a high R2 means
+"the forest learned the simulator"; a hidden per-batch shelf-life multiplier adds irreducible noise. Model card, report
+and API responses all carry "trained on simulated data".
+
+**D-041 The simulated ethylene index tracks concentration with a lag and can fall.** Real indicator strips are largely
+irreversible; the control loop (fan on when rising, off after 30 min not rising) and the requested "fan on, ethylene
+falls" demo need a signal that can fall. Documented in the model card and LIMITATIONS; lab calibration vs a reference
+sensor is pending.
+
+**D-042 Real and demo model pairs.** *real* = physical time (trips of 12-72 h, record every 5 min). *demo* = the same
+physics with time compressed 24x (trips of 1.5-5 h, record every minute) so risk moves visibly in a short live run.
+Selected per shipment (`model_profile`, admin-only endpoint). The demo pair is never for real use.
+
+**D-043 No `cooling_status` feature.** It leaked the label in MedRakshak's demo model. Actuator state is only
+`flap_position` and `scrubber_on` (derived by the hub from sensor readings). Training fails if a forbidden column is
+present; `ModelBundle` refuses to load a model that uses one. Other automated checks: no shipment in two splits,
+single-feature R2 < 0.95, shuffled-label control.
+
+**D-044 One FeatureEngine for training and serving** (no train/serve skew); long gaps are not integrated as exposure
+(capped at 60 min); the crate is the mean tag temperature and the max ethylene index of tags seen in the last 15 min.
+
+**D-045 Risk definition (simulator assumption).** fraction of shelf life consumed + a small term for the current
+degradation rate; SAFE < 30, WARNING 30-70, CRITICAL >= 70 (thresholds from the product explainer). A short spike does
+not alarm; a long excursion escalates steadily (verified by scripted scenarios in the training report).
+
+**D-046 Alert state machine** is ported from the firmware logic: immediate escalation, 15 s recovery hold measured in
+*data time* (works under time acceleration), CRITICAL latches until acknowledged (latching only on *entering*
+CRITICAL - a unit test caught a bug where it re-latched every update).
+
+**D-047 AI -> hub command semantics.** `FLAP_SET n` is a *floor* (hub edge rules may open further, never below it until
+`FLAP_SET 0`); `FAN_ON` forces the scrubber, `FAN_OFF` releases it to the edge rule; `ALERT_*` set the LED/buzzer tier;
+`ACK_ALERT` follows a user acknowledgement. Commands are sent only on change, only for live data (not while the hub is
+draining its backlog), and never block ingest.
+
+**D-048 Rerouting.** Pre-filter by straight line, ask OSRM only for the nearest 6 compatible facilities, prefer those
+reachable before the predicted spoilage, fall back to a labelled Haversine estimate (circuit breaker, 1 h cache).
+Computed in a background task so ingest never waits on the network. Facilities are **synthetic** (163 fabricated rows
+around real towns, `data_source=synthetic`, names end in "(SYNTHETIC)"); replace with an official list (NHB / state
+agriculture department) using the same CSV columns.
+
+**D-049 Food bands are placeholders.** Values written from general postharvest knowledge, cited only as "USDA
+Agriculture Handbook 66" with `verification_status: TODO-verify` (no page numbers claimed). `nominal_shelf_life_h` is a
+simulator assumption and is labelled as such.
+
+**D-050 Weather (Open-Meteo: rain, wind) is optional and non-blocking** (`peek()` returns cached/default immediately and
+refreshes in the background); ambient temperature/humidity come from the hub's own SHT31.
+
+**D-051 Models are trained at Docker build time** (`--per-food 150`, ~5 min) rather than committed; `make train`
+does the same locally. Tests use a quick-trained pair cached in `.cache` and keyed by a hash of the ML sources.

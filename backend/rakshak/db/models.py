@@ -139,6 +139,7 @@ class Shipment(Base):
     created_by: Mapped[str] = mapped_column(String(64), default="")
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     closed_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    model_profile: Mapped[str] = mapped_column(String(8), default="real", server_default="real")
 
     handovers: Mapped[list[Handover]] = relationship(
         back_populates="shipment", order_by="Handover.id", cascade="all, delete-orphan"
@@ -275,3 +276,20 @@ class CommandLog(Base):
     status: Mapped[str] = mapped_column(String(10), default="SENT")  # SENT | ACKED | FAILED
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow)
     acked_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+
+
+class RiskPoint(Base):
+    """One prediction (device time ``t``) for the risk chart and the audit trail of AI decisions."""
+
+    __tablename__ = "risk_points"
+    __table_args__ = (Index("ix_risk_shipment_t", "shipment_id", "t"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shipment_id: Mapped[str] = mapped_column(String(16))
+    t: Mapped[int] = mapped_column(BigInteger)
+    risk: Mapped[float] = mapped_column(Float)
+    rsl_hours: Mapped[float] = mapped_column(Float)
+    level: Mapped[int] = mapped_column(Integer)
+    profile: Mapped[str] = mapped_column(String(8))
+    temp_c: Mapped[float | None] = mapped_column(Float, nullable=True)
+    ethylene_idx: Mapped[float | None] = mapped_column(Float, nullable=True)

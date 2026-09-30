@@ -25,7 +25,6 @@ frontend/dist/
 .idea/
 
 # ML artefacts are built (make train); reports/model cards are committed
-ml/artifacts/*.pkl
+ml/artifacts/models/
 ml/artifacts/*.joblib
-backend/rakshak/ml_models/*.joblib
 .DS_Store

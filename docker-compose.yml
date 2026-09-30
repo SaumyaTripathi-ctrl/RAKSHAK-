@@ -56,7 +56,9 @@ services:
     restart: unless-stopped
 
   api:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     environment:
       RAKSHAK_ENV: dev
       RAKSHAK_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-rakshak}:${POSTGRES_PASSWORD:-rakshak-dev}@postgres:5432/${POSTGRES_DB:-rakshak}

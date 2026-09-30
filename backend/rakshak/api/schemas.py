@@ -46,6 +46,7 @@ class ShipmentCreate(BaseModel):
     dest_lon: float | None = Field(default=None, ge=-180, le=180)
     hub_id: str | None = None
     tag_ids: list[str] = Field(default_factory=list)
+    model_profile: str = Field(default="real", pattern="^(real|demo)$")
 
 
 class ShipmentOut(ORM):
@@ -65,6 +66,7 @@ class ShipmentOut(ORM):
     created_by: str
     created_at: datetime
     closed_at: datetime | None
+    model_profile: str
 
 
 class BindRequest(BaseModel):

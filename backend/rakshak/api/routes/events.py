@@ -64,6 +64,11 @@ async def ack_event(event_id: int, session: Session, user: Responder, request: R
         request.app.state.realtime.publish(
             {"type": "event", "data": event_to_dict(ev)}, ev.shipment_id
         )
+        predictor = getattr(request.app.state, "predictor", None)
+        if predictor is not None:
+            await predictor.on_event_ack(
+                ev
+            )  # silences the latched alarm and tells the hub (ACK_ALERT)
     return ev
 
 

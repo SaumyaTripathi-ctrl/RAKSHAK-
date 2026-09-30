@@ -6,6 +6,6 @@ if (-not (Test-Path '.venv\Scripts\python.exe')) {
 }
 $p = Get-Python
 Invoke-Checked $p @('-m', 'pip', 'install', '-U', 'pip')
-Invoke-Checked $p @('-m', 'pip', 'install', '-e', 'backend[api,ml,dev]')
+Invoke-Checked $p @('-m', 'pip', 'install', '-e', 'ml', '-e', 'backend[api,dev]')
 if (Test-Path 'simulator\pyproject.toml') { Invoke-Checked $p @('-m', 'pip', 'install', '-e', 'simulator') }
 Write-Host 'setup complete'

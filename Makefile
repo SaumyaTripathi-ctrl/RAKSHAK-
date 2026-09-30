@@ -15,7 +15,7 @@ help:
 setup:
 	python -m venv .venv
 	$(PY) -m pip install -U pip
-	$(PY) -m pip install -e "backend[api,ml,dev]" -e simulator
+	$(PY) -m pip install -e ml -e "backend[api,dev]" -e simulator
 
 up:
 	docker compose up --build
@@ -49,7 +49,7 @@ lint:
 	cd frontend && npm run lint --silent
 
 train:
-	$(PY) -m rakshak_ml.train
+	$(PY) -m rakshak_ml.train --out ml/artifacts
 
 demo:
 	docker compose up -d --build

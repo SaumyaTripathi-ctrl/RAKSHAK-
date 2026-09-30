@@ -1,0 +1,12 @@
+**/__pycache__
+**/*.pyc
+.venv
+.cache
+.git
+.pio
+node_modules
+frontend/dist
+**/*.db
+ml/artifacts/models
+backend/tests
+ml/tests

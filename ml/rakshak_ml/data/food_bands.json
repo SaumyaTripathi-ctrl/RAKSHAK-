@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "description": "Storage bands per food type, used by edge rules, the simulator and the ML features.",
+    "status": "PLACEHOLDER VALUES - TODO-verify every number against the cited reference before any real use.",
+    "reference": "USDA Agriculture Handbook 66, 'The Commercial Storage of Fruits, Vegetables, and Florist and Nursery Stocks' (commodity storage tables).",
+    "reference_note": "Temperature/RH values below were written from general postharvest knowledge and are NOT yet checked line-by-line against the handbook; no page numbers are claimed.",
+    "nominal_shelf_life_h_note": "SIMULATOR ASSUMPTION, not a measured or cited value. It only sets the time scale of the simulated quality model."
+  },
+  "foods": {
+    "mango": {
+      "min_temp": 10.0, "max_temp": 13.0, "min_rh": 85.0, "max_rh": 90.0,
+      "ethylene_sensitive": true, "ethylene_producer": true,
+      "nominal_shelf_life_h": 240,
+      "source": "USDA Agriculture Handbook 66 (mango) - chilling-sensitive below ~10 C; mature-green around 13 C",
+      "verification_status": "TODO-verify"
+    },
+    "banana": {
+      "min_temp": 13.0, "max_temp": 14.0, "min_rh": 90.0, "max_rh": 95.0,
+      "ethylene_sensitive": true, "ethylene_producer": true,
+      "nominal_shelf_life_h": 240,
+      "source": "USDA Agriculture Handbook 66 (banana, green) - chilling injury below ~13 C",
+      "verification_status": "TODO-verify"
+    },
+    "tomato": {
+      "min_temp": 10.0, "max_temp": 13.0, "min_rh": 90.0, "max_rh": 95.0,
+      "ethylene_sensitive": true, "ethylene_producer": true,
+      "nominal_shelf_life_h": 288,
+      "source": "USDA Agriculture Handbook 66 (tomato, mature-green to ripe) - band simplified to one range",
+      "verification_status": "TODO-verify"
+    },
+    "leafy_vegetables": {
+      "min_temp": 0.0, "max_temp": 2.0, "min_rh": 95.0, "max_rh": 100.0,
+      "ethylene_sensitive": true, "ethylene_producer": false,
+      "nominal_shelf_life_h": 120,
+      "source": "USDA Agriculture Handbook 66 (leafy greens, e.g. lettuce/spinach) - near 0 C, very high RH",
+      "verification_status": "TODO-verify"
+    },
+    "milk": {
+      "min_temp": 2.0, "max_temp": 4.0, "min_rh": 0.0, "max_rh": 100.0,
+      "ethylene_sensitive": false, "ethylene_producer": false,
+      "nominal_shelf_life_h": 96,
+      "source": "General dairy cold-chain practice (chilled milk at or below about 4 C); no citation - TODO-verify against FSSAI / dairy guidance",
+      "verification_status": "TODO-verify"
+    }
+  }
+}

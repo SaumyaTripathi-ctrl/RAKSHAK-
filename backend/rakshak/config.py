@@ -38,6 +38,18 @@ class Settings(BaseSettings):
     mqtt_client_id: str = "rakshak-api"
 
     seed_demo: bool = False
+
+    # Prediction / AI
+    predictions_enabled: bool = True
+    model_dir: str | None = None  # default: <repo>/ml/artifacts/models (or RAKSHAK_MODEL_DIR)
+    ai_commands_enabled: bool = True
+    recovery_hold_s: float = 15.0
+    weather_enabled: bool = (
+        False  # Open-Meteo lookups (rain/wind); off by default so tests/dev need no network
+    )
+    osrm_enabled: bool = True
+    osrm_url: str = "https://router.project-osrm.org"
+    facilities_csv: str | None = None
     # A hub's offline gap is reported by the hub itself on reconnect (``offline_since``).
     ledger_backend: str = "local"
     ledger_path: str = "./data/ledger.jsonl"

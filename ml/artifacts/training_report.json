@@ -1,0 +1,304 @@
+{
+  "real": {
+    "profile": "real",
+    "rows": {
+      "train": 54065,
+      "val": 11217,
+      "test": 11587
+    },
+    "risk": {
+      "val": {
+        "mae": 3.911,
+        "r2": 0.9635
+      },
+      "test": {
+        "mae": 3.5,
+        "r2": 0.9657
+      },
+      "baseline_mean_test": {
+        "mae": 27.596,
+        "r2": -0.0012
+      },
+      "baseline_linear_3feat_test": {
+        "mae": 9.274,
+        "r2": 0.8543
+      }
+    },
+    "rsl": {
+      "val": {
+        "mae": 15.153,
+        "r2": 0.9017
+      },
+      "test": {
+        "mae": 14.717,
+        "r2": 0.9136,
+        "mae_when_true_rsl_below_half_cap": 10.354
+      },
+      "baseline_mean_test": {
+        "mae": 60.036,
+        "r2": -0.0026
+      },
+      "baseline_linear_3feat_test": {
+        "mae": 37.763,
+        "r2": 0.5695
+      }
+    },
+    "alert_levels": {
+      "accuracy": 0.9232,
+      "critical_recall": 0.887,
+      "critical_precision": 0.9109,
+      "share_true": {
+        "SAFE": 0.5507,
+        "WARNING": 0.2554,
+        "CRITICAL": 0.1939
+      }
+    },
+    "per_food_risk_test_mae": {
+      "banana": 3.13,
+      "leafy_vegetables": 3.21,
+      "mango": 3.54,
+      "milk": 4.99,
+      "tomato": 2.45
+    },
+    "top_features_risk": [
+      {
+        "feature": "cumulative_temp_exposure",
+        "importance": 0.4907
+      },
+      {
+        "feature": "temperature_deviation",
+        "importance": 0.1557
+      },
+      {
+        "feature": "max_temp_deviation",
+        "importance": 0.1009
+      },
+      {
+        "feature": "time_outside_temp_range",
+        "importance": 0.0731
+      },
+      {
+        "feature": "time_since_first_excursion",
+        "importance": 0.0327
+      },
+      {
+        "feature": "cumulative_humidity_exposure",
+        "importance": 0.0278
+      },
+      {
+        "feature": "elapsed_minutes",
+        "importance": 0.0201
+      },
+      {
+        "feature": "nominal_shelf_life_h",
+        "importance": 0.0159
+      },
+      {
+        "feature": "max_humidity",
+        "importance": 0.0148
+      },
+      {
+        "feature": "ethylene_producer",
+        "importance": 0.0099
+      }
+    ],
+    "leakage_checks": {
+      "no_shipment_in_two_splits": {
+        "ok": true,
+        "detail": "0 shared shipments"
+      },
+      "no_forbidden_feature_columns": {
+        "ok": true,
+        "detail": "none"
+      },
+      "cooling_status_absent": {
+        "ok": true,
+        "detail": "the MedRakshak leak"
+      },
+      "features_are_exactly_the_declared_list": {
+        "ok": true,
+        "detail": "33 features"
+      },
+      "no_single_feature_explains_label": {
+        "ok": true,
+        "detail": "best linear single-feature R2 = 0.732 (temperature_deviation)"
+      },
+      "shuffled_label_control": {
+        "ok": true,
+        "detail": "R2 on test with shuffled training labels = -0.005 (real model: 0.966)"
+      }
+    },
+    "scenarios": {
+      "steady_in_band": {
+        "mean_max_risk": 22.4,
+        "mean_final_risk": 22.3,
+        "share_reaching_warning": 0.27,
+        "share_reaching_critical": 0.0
+      },
+      "short_spike_20min": {
+        "mean_max_risk": 28.1,
+        "mean_final_risk": 27.9,
+        "share_reaching_warning": 0.27,
+        "share_reaching_critical": 0.0
+      },
+      "long_heat_event": {
+        "mean_max_risk": 78.8,
+        "mean_final_risk": 78.5,
+        "share_reaching_warning": 1.0,
+        "share_reaching_critical": 0.73
+      }
+    },
+    "seconds": 58.1
+  },
+  "demo": {
+    "profile": "demo",
+    "rows": {
+      "train": 20915,
+      "val": 4349,
+      "test": 4504
+    },
+    "risk": {
+      "val": {
+        "mae": 4.174,
+        "r2": 0.9611
+      },
+      "test": {
+        "mae": 3.504,
+        "r2": 0.9735
+      },
+      "baseline_mean_test": {
+        "mae": 35.205,
+        "r2": -0.0013
+      },
+      "baseline_linear_3feat_test": {
+        "mae": 11.696,
+        "r2": 0.8439
+      }
+    },
+    "rsl": {
+      "val": {
+        "mae": 0.52,
+        "r2": 0.9165
+      },
+      "test": {
+        "mae": 0.493,
+        "r2": 0.9299,
+        "mae_when_true_rsl_below_half_cap": 0.316
+      },
+      "baseline_mean_test": {
+        "mae": 2.466,
+        "r2": -0.0035
+      },
+      "baseline_linear_3feat_test": {
+        "mae": 1.489,
+        "r2": 0.6022
+      }
+    },
+    "alert_levels": {
+      "accuracy": 0.9272,
+      "critical_recall": 0.9537,
+      "critical_precision": 0.9532,
+      "share_true": {
+        "SAFE": 0.3606,
+        "WARNING": 0.2176,
+        "CRITICAL": 0.4218
+      }
+    },
+    "per_food_risk_test_mae": {
+      "banana": 3.17,
+      "leafy_vegetables": 2.36,
+      "mango": 3.36,
+      "milk": 4.57,
+      "tomato": 3.94
+    },
+    "top_features_risk": [
+      {
+        "feature": "cumulative_temp_exposure",
+        "importance": 0.4809
+      },
+      {
+        "feature": "temperature_deviation",
+        "importance": 0.1484
+      },
+      {
+        "feature": "max_temp_deviation",
+        "importance": 0.1068
+      },
+      {
+        "feature": "time_outside_temp_range",
+        "importance": 0.0812
+      },
+      {
+        "feature": "time_since_first_excursion",
+        "importance": 0.0461
+      },
+      {
+        "feature": "elapsed_minutes",
+        "importance": 0.0251
+      },
+      {
+        "feature": "nominal_shelf_life_h",
+        "importance": 0.0164
+      },
+      {
+        "feature": "max_humidity",
+        "importance": 0.0156
+      },
+      {
+        "feature": "cumulative_humidity_exposure",
+        "importance": 0.0141
+      },
+      {
+        "feature": "max_temp",
+        "importance": 0.0111
+      }
+    ],
+    "leakage_checks": {
+      "no_shipment_in_two_splits": {
+        "ok": true,
+        "detail": "0 shared shipments"
+      },
+      "no_forbidden_feature_columns": {
+        "ok": true,
+        "detail": "none"
+      },
+      "cooling_status_absent": {
+        "ok": true,
+        "detail": "the MedRakshak leak"
+      },
+      "features_are_exactly_the_declared_list": {
+        "ok": true,
+        "detail": "33 features"
+      },
+      "no_single_feature_explains_label": {
+        "ok": true,
+        "detail": "best linear single-feature R2 = 0.704 (temperature_deviation)"
+      },
+      "shuffled_label_control": {
+        "ok": true,
+        "detail": "R2 on test with shuffled training labels = -0.006 (real model: 0.974)"
+      }
+    },
+    "scenarios": {
+      "steady_in_band": {
+        "mean_max_risk": 36.0,
+        "mean_final_risk": 35.9,
+        "share_reaching_warning": 0.53,
+        "share_reaching_critical": 0.13
+      },
+      "short_spike_20min": {
+        "mean_max_risk": 49.6,
+        "mean_final_risk": 49.4,
+        "share_reaching_warning": 0.9,
+        "share_reaching_critical": 0.17
+      },
+      "long_heat_event": {
+        "mean_max_risk": 86.5,
+        "mean_final_risk": 86.3,
+        "share_reaching_warning": 1.0,
+        "share_reaching_critical": 1.0
+      }
+    },
+    "seconds": 34.3
+  }
+}
