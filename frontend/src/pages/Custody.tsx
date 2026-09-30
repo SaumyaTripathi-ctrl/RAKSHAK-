@@ -1,5 +1,5 @@
 import { Anchor, Check, Link2, PenLine } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -147,7 +147,7 @@ function HandoverForm({ id }: { id: string }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const handover = useHandover(id);
-  const allowed = user ? ROLE_STAGES[user.role] : [];
+  const allowed = useMemo(() => (user ? ROLE_STAGES[user.role] : []), [user]);
   const [stage, setStage] = useState<Stage | "">("");
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");

@@ -87,6 +87,15 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
   # SIMULATED devices: virtual hubs + tags speaking the real encrypted MQTT protocol (no hardware needed).
   simulator:
     build:
