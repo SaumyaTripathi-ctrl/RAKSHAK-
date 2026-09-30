@@ -5,6 +5,15 @@ extern "C" {
 #include "rk_ring.h"
 }
 
+// Latest reading sent in the clear (message 0x03) so the hub's edge rules can steer the flap/fan without holding tag keys.
+// It drives actuators only: the sealed, chained frames are what reaches the ledger.
+struct LiveReading {
+    int16_t temp_x100 = 0;
+    uint16_t rh_x100 = 0;
+    uint16_t eth_x10 = 0;
+    bool valid = false;
+};
+
 struct BleResult {
     bool connected = false;
     int sent = 0;
@@ -16,4 +25,4 @@ struct BleResult {
 
 // Advertise for `window_ms`; if the hub connects, send up to `max_frames` from the ring and wait for the ACK.
 // Records are removed from the ring ONLY after a valid ACK covering them.
-BleResult ble_offer_batch(rk_ring_t *ring, uint32_t window_ms, int max_frames);
+BleResult ble_offer_batch(rk_ring_t *ring, uint32_t window_ms, int max_frames, const LiveReading &live);

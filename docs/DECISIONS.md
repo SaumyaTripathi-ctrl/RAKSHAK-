@@ -156,3 +156,23 @@ refreshes in the background); ambient temperature/humidity come from the hub's o
 
 **D-051 Models are trained at Docker build time** (`--per-food 150`, ~5 min) rather than committed; `make train`
 does the same locally. Tests use a quick-trained pair cached in `.cache` and keyed by a hash of the ML sources.
+
+## Firmware (Phase 7)
+
+**D-052 Cleartext live reading over BLE.** The hub holds no tag keys, so it cannot read a tag's sealed frames, yet the
+flap/fan edge rules need crate temperature and the ethylene index. Each BLE session therefore starts with a 7-byte
+cleartext message `0x03` (temp x100, RH x100, ethylene x10). It steers actuators only; the ledger sees the sealed frames.
+A spoofed live reading could mis-steer the flap/fan: accepted for a prototype (BLE bonding with pairing keys is future work).
+
+**D-053 Raw-flash ring instead of LittleFS.** LittleFS/FS would not link under the pioarduino platform, and a filesystem
+adds wear and failure modes. The ring uses the `spiffs` data partition raw (sector erase per 23 slots, zero-write to
+invalidate). Capacity: tag ~1012 records (~17 h at 1/min), hub ~8000 (capped by partition).
+
+**D-054 Hub power management = continuous scan in transit, light sleep when parked** (rather than deep sleep): the modem
+holds the MQTT session and actuators must stay driven, so deep sleep would drop both. Tags deep-sleep.
+
+**D-055 Local commands over BLE:** the hub exposes a writable GATT characteristic taking the same JSON as MQTT, plus a
+serial `CMD <json>`; all three feed one queue and acks are published when 4G is up.
+
+**D-056 PlatformIO:** pioarduino platform (Arduino-ESP32 3.x), NimBLE-Arduino 2.x, own MPU6050 driver and LEDC servo
+(no third-party MPU/servo libraries).

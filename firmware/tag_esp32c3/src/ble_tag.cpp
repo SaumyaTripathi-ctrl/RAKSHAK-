@@ -66,7 +66,7 @@ bool notify_frames(NimBLECharacteristic *ch, rk_ring_t *ring, int max_frames, ui
 }
 } // namespace
 
-BleResult ble_offer_batch(rk_ring_t *ring, uint32_t window_ms, int max_frames) {
+BleResult ble_offer_batch(rk_ring_t *ring, uint32_t window_ms, int max_frames, const LiveReading &live) {
     BleResult res;
     g_connected = g_ack = g_pair = false;
 
@@ -91,6 +91,12 @@ BleResult ble_offer_batch(rk_ring_t *ring, uint32_t window_ms, int max_frames) {
     res.connected = g_connected;
     if (g_connected) {
         delay(400); // let the hub discover services, subscribe and (optionally) negotiate the MTU
+        if (live.valid) {
+            uint8_t lm[7] = {0x03, (uint8_t)live.temp_x100, (uint8_t)((uint16_t)live.temp_x100 >> 8), (uint8_t)live.rh_x100, (uint8_t)(live.rh_x100 >> 8), (uint8_t)live.eth_x10, (uint8_t)(live.eth_x10 >> 8)};
+            frames->setValue(lm, sizeof lm);
+            frames->notify();
+            delay(8);
+        }
         uint32_t first = 0, last = 0;
         int count = 0;
         if (ring->count > 0 && notify_frames(frames, ring, max_frames, &first, &last, &count)) {

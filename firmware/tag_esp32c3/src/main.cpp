@@ -26,6 +26,8 @@ RTC_DATA_ATTR static uint32_t wake_count = 0;
 RTC_DATA_ATTR static bool lid_latched = false;
 RTC_DATA_ATTR static bool low_batt_sent = false;
 RTC_DATA_ATTR static float last_eth = 0.0f;
+RTC_DATA_ATTR static float last_temp = 0.0f, last_rh = 0.0f;
+RTC_DATA_ATTR static bool have_live = false;
 RTC_DATA_ATTR static rk_clock_t rclock;
 
 static rk_ring_t ring;
@@ -177,6 +179,9 @@ void setup() {
     }
     uint8_t batt = sensors_battery_pct();
     if (th.ok) {
+        last_temp = th.temp_c;
+        last_rh = th.rh_pct;
+        have_live = true;
         if (!emit_tag_sample(th.temp_c, th.rh_pct, last_eth, batt)) Serial.println("record NOT stored");
     } else {
         Serial.println("SHT31 read failed: no record this minute (a gap is reported, never a guess)");
@@ -187,7 +192,12 @@ void setup() {
     }
 
     if (wake_count % BLE_EVERY_WAKES == 0) {
-        BleResult r = ble_offer_batch(&ring, BLE_WINDOW_MS, BATCH_MAX_FRAMES);
+        LiveReading live;
+        live.valid = have_live;
+        live.temp_x100 = (int16_t)lroundf(last_temp * 100.0f);
+        live.rh_x100 = (uint16_t)lroundf(last_rh * 100.0f);
+        live.eth_x10 = (uint16_t)lroundf(constrain(last_eth, 0.0f, 100.0f) * 10.0f);
+        BleResult r = ble_offer_batch(&ring, BLE_WINDOW_MS, BATCH_MAX_FRAMES, live);
         if (r.paired) {
             storage_put_str("ship", r.shipment_id);
             strncpy(shipment, r.shipment_id, RK_ID_LEN);
