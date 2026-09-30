@@ -3,11 +3,6 @@
 
 name: rakshak
 
-x-mqtt-env: &mqtt-env
-  MQTT_HOST: mosquitto
-  MQTT_PORT: "8883"
-  MQTT_CA_FILE: /certs/ca.crt
-
 services:
   # One-shot: creates a DEV-ONLY CA + broker certificate into the `certs` volume (idempotent).
   certs:
@@ -60,7 +55,35 @@ services:
       retries: 10
     restart: unless-stopped
 
+  api:
+    build: ./backend
+    environment:
+      RAKSHAK_ENV: dev
+      RAKSHAK_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-rakshak}:${POSTGRES_PASSWORD:-rakshak-dev}@postgres:5432/${POSTGRES_DB:-rakshak}
+      RAKSHAK_AUTO_CREATE_SCHEMA: "false"
+      RAKSHAK_MQTT_ENABLED: "true"
+      RAKSHAK_MQTT_HOST: mosquitto
+      RAKSHAK_MQTT_PORT: "8883"
+      RAKSHAK_MQTT_PASSWORD: ${MQTT_API_PASSWORD:-dev-api-pass}
+      RAKSHAK_MQTT_CA_FILE: /certs/ca.crt
+      RAKSHAK_MASTER_KEY_HEX: ${RAKSHAK_MASTER_KEY_HEX:-000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f}
+      RAKSHAK_JWT_SECRET: ${RAKSHAK_JWT_SECRET:-dev-only-change-me-dev-only-change-me}
+      RAKSHAK_SEED_DEMO: "true"
+      RAKSHAK_LEDGER_PATH: /data/ledger.jsonl
+    volumes:
+      - certs:/certs:ro
+      - api-data:/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
+  api-data:
   certs:
   mosquitto-data:
   pgdata:
