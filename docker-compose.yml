@@ -1,0 +1,66 @@
+# Rakshak - one command: `docker compose up` (Docker Desktop on Windows; see README).
+# Services are added phase by phase; this file always reflects what currently exists.
+
+name: rakshak
+
+x-mqtt-env: &mqtt-env
+  MQTT_HOST: mosquitto
+  MQTT_PORT: "8883"
+  MQTT_CA_FILE: /certs/ca.crt
+
+services:
+  # One-shot: creates a DEV-ONLY CA + broker certificate into the `certs` volume (idempotent).
+  certs:
+    image: alpine:3.20
+    command: sh -c "apk add --no-cache openssl >/dev/null && sh /gen/gen-dev-certs.sh /certs"
+    volumes:
+      - certs:/certs
+      - ./infra/certs/gen-dev-certs.sh:/gen/gen-dev-certs.sh:ro
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    entrypoint: ["sh", "/mosquitto/entrypoint.sh"]
+    environment:
+      MQTT_API_PASSWORD: ${MQTT_API_PASSWORD:-dev-api-pass}
+      MQTT_DEVICE_USERS: ${MQTT_DEVICE_USERS:-HUB-0001:dev-hub-0001,HUB-0002:dev-hub-0002,HUB-0003:dev-hub-0003}
+    ports:
+      - "8883:8883"
+    volumes:
+      - certs:/mosquitto/certs:ro
+      - mosquitto-data:/mosquitto/data
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./infra/mosquitto/acl:/mosquitto/config/acl:ro
+      - ./infra/mosquitto/entrypoint.sh:/mosquitto/entrypoint.sh:ro
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -p 8883 --cafile /mosquitto/certs/ca.crt -u rakshak-api -P \"$${MQTT_API_PASSWORD}\" -t '$$SYS/broker/version' -C 1 -W 3 >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 5s
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rakshak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rakshak-dev}
+      POSTGRES_DB: ${POSTGRES_DB:-rakshak}
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-55432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  certs:
+  mosquitto-data:
+  pgdata:

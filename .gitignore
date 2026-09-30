@@ -1,0 +1,31 @@
+__pycache__/
+*.py[cod]
+.venv/
+.cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.env
+*.db
+*.sqlite3
+
+# dev certs / keys are generated, never committed
+infra/certs/out/
+*.key
+*.pem
+
+# node
+node_modules/
+frontend/dist/
+.vite/
+
+# PlatformIO
+.pio/
+.vscode/
+.idea/
+
+# ML artefacts are built (make train); reports/model cards are committed
+ml/artifacts/*.pkl
+ml/artifacts/*.joblib
+backend/rakshak/ml_models/*.joblib
+.DS_Store

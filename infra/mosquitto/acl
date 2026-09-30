@@ -1,0 +1,12 @@
+# A device's MQTT username is its hub id (e.g. HUB-0001). %u expands to the username, so a hub can
+# only publish under its own prefix and only read its own command topic.
+pattern write rakshak/%u/telemetry
+pattern write rakshak/%u/events
+pattern read rakshak/%u/cmd
+
+# Backend service account: ingest everything, send commands to any hub.
+user rakshak-api
+topic read rakshak/+/telemetry
+topic read rakshak/+/events
+topic write rakshak/+/cmd
+topic read $SYS/broker/version
