@@ -10,9 +10,8 @@ SHA-256 hash-chained; the backend verifies chains, predicts spoilage (risk + rem
 the nearest compatible cold store, and anchors a Merkle root per batch on a ledger. A public QR page shows the
 verified journey.
 
-> **Status: under construction, built phase by phase.** See `docs/DECISIONS.md` for what is done and why.
-> Everything simulated is labelled simulated (ML training data, cold-storage dataset, device traffic).
-> Firmware is **compile-tested only, not hardware-tested.**
+> **Status: complete prototype.** Everything simulated is labelled simulated (ML training data, cold-storage
+> dataset, device traffic). Firmware is **compile-tested only, not hardware-tested.** Read `docs/LIMITATIONS.md`.
 > Evolved from our MedRakshak (SIH26215) prototype.
 
 ## Layout
@@ -27,7 +26,7 @@ verified journey.
 | `simulator/` | virtual hub + tags publishing real MQTT traffic |
 | `frontend/` | React + Vite + TypeScript dashboard |
 | `infra/` | Mosquitto (TLS + ACL), Postgres init, dev-cert script |
-| `docs/` | architecture, decisions, limitations |
+| `docs/` | `ARCHITECTURE.md`, `API.md`, `PROTOCOL.md`, `DEMO.md`, `DECISIONS.md`, `LIMITATIONS.md`, `PROVISIONING.md` |
 
 ## Run (Windows, Docker Desktop)
 
@@ -41,6 +40,18 @@ scripts\demo.ps1      # scripted end-to-end demo
 ```
 
 Linux/macOS: `make up`, `make test`, `make demo`. Every Makefile target has a `scripts\*.ps1` twin.
+
+## One-command run
+
+`scripts\up.ps1` (Windows) or `docker compose up --build` starts Mosquitto (TLS + ACL), Postgres, the API, the web
+dashboard (<http://localhost:8080>, demo-account buttons on the login page) and the simulator with seed data.
+Then `scripts\demo.ps1` / `make demo` plays the full story (heat -> flap -> ethylene -> fan -> network cut -> backlog
+sync -> CRITICAL -> reroute -> tamper -> Verify says TAMPERED -> QR page); see `docs/DEMO.md`.
+
+## Tests
+
+`scripts\test.ps1` / `make test`: pytest (backend, ML, simulator), host C tests (codec vectors, ring/device, edge rules),
+frontend (vitest, tsc, eslint). Firmware builds: `pio run -d firmware/tag_esp32c3` and `-d firmware/hub_esp32s3`.
 
 ## Cross-language correctness
 

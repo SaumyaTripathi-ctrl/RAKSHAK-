@@ -29,6 +29,8 @@ async def autoplay(manager: RunManager, hub_id: str, scenarios: list[str], loop:
     i = 0
     while True:
         name = scenarios[i % len(scenarios)]
+        while manager._busy(hub_id):  # never steal a hub from a run started by the API/demo
+            await asyncio.sleep(5)
         try:
             run = await manager.start(
                 name, hub_id=hub_id, seed=i + 1, new_shipment=i >= len(scenarios)
@@ -94,6 +96,7 @@ def main() -> None:
         host="0.0.0.0",
         port=int(os.environ.get("SIM_PORT", "8100")),
         log_level="warning",
+        loop="asyncio",  # aiomqtt uses loop.add_writer, which uvloop rejects for closed sockets
     )
 
 

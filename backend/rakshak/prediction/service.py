@@ -120,6 +120,7 @@ class Tracker:
     reroute: dict | None = None
     reroute_accepted: str | None = None
     reroute_pending: bool = False
+    reroute_announced: bool = False  # the 'Reroute recommended' event was raised for this shipment
     weather_lat: float | None = None
 
 
@@ -340,7 +341,7 @@ class PredictionService:
 
         if not historical:
             await self._steer(s, tr, shipment, level, feats, transition is not None)
-            if level is Level.CRITICAL and tr.reroute is None and not tr.reroute_pending:
+            if level is Level.CRITICAL and not tr.reroute_announced and not tr.reroute_pending:
                 # also covers CRITICAL reached while the hub was offline (that transition was historical)
                 tr.reroute_pending = True
                 self._spawn(self._auto_reroute(tr.shipment_id, pred.rsl_hours))
@@ -480,6 +481,8 @@ class PredictionService:
             if tr is not None:
                 tr.reroute = doc
             if persist_event and rec.recommended:
+                if tr is not None:
+                    tr.reroute_announced = True
                 best = rec.recommended
                 ev = make_event(
                     EventKind.REROUTE,

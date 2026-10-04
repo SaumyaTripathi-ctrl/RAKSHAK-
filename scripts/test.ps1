@@ -2,6 +2,7 @@
 . "$PSScriptRoot\_env.ps1"
 $py = Get-Python
 Invoke-Checked $py @('tools\gen_vectors.py', '--check')
+Invoke-Checked $py @('tools\gen_edge_vectors.py', '--check')
 $dirs = @('backend\tests', 'ml\tests', 'simulator\tests') | Where-Object { Test-Path $_ }
 Invoke-Checked $py (@('-m', 'pytest') + $dirs + @('-q'))
 & "$PSScriptRoot\test-c.ps1"

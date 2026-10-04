@@ -36,6 +36,7 @@ test: test-py test-c test-fe
 
 test-py:
 	$(PY) tools/gen_vectors.py --check
+	$(PY) tools/gen_edge_vectors.py --check
 	$(PY) -m pytest backend/tests ml/tests simulator/sim_tests -q
 
 test-c:

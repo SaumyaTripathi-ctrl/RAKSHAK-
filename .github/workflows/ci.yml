@@ -26,7 +26,7 @@ jobs:
       - name: Lint
         run: python -m ruff check backend ml simulator tools
       - name: Test vectors are fresh
-        run: python tools/gen_vectors.py --check
+        run: python tools/gen_vectors.py --check && python tools/gen_edge_vectors.py --check
       - name: Tests
         run: |
           dirs="backend/tests"

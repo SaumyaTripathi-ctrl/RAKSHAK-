@@ -92,15 +92,29 @@ async def test_abrupt_drop_publishes_last_will_and_backlog_syncs_over_real_mqtt(
 
     async def all_in():
         async with app.state.db.session_factory() as s:
-            n = (await s.execute(select(func.count()).select_from(Record).where(Record.shipment_id == "RKS-26-000002"))).scalar_one()
+            n = (
+                await s.execute(
+                    select(func.count())
+                    .select_from(Record)
+                    .where(Record.shipment_id == "RKS-26-000002")
+                )
+            ).scalar_one()
         # minus the 3 tags x 4 ticks still buffered on the tags after the last BLE batch (every 5th tick)
         return n >= total_published - 12
 
     assert await wait_for(all_in), "records lost over the real broker"
     async with app.state.db.session_factory() as s:
-        kinds = [e.kind for e in (await s.execute(select(Event).order_by(Event.id))).scalars() if e.kind.startswith("HUB_")]
+        kinds = [
+            e.kind
+            for e in (await s.execute(select(Event).order_by(Event.id))).scalars()
+            if e.kind.startswith("HUB_")
+        ]
         segs = list((await s.execute(select(OfflineSegment))).scalars())
-        missing = list((await s.execute(select(Event).where(Event.kind == "MISSING_RECORDS"))).scalars())
-    assert "HUB_OFFLINE" in kinds and kinds[-1] == "HUB_ONLINE"  # last-will really fired, then the reconnect
+        missing = list(
+            (await s.execute(select(Event).where(Event.kind == "MISSING_RECORDS"))).scalars()
+        )
+    assert (
+        "HUB_OFFLINE" in kinds and kinds[-1] == "HUB_ONLINE"
+    )  # last-will really fired, then the reconnect
     assert len(segs) == 1 and segs[0].end_ts and segs[0].end_ts > segs[0].start_ts
     assert not missing
