@@ -126,7 +126,9 @@ async def fleet_overview(session: Session, _: CurrentUser, request: Request) -> 
             "active_shipments": len(active),
             "at_risk": at_risk,
             "offline_hubs": offline,
-            "verified_batches": await verifier.verified_batch_count(session) if verifier else 0,
+            "verified_batches": await verifier.verified_batch_count(session, [s.id for s in active])
+            if verifier
+            else 0,
         },
         "trucks": trucks,
     }

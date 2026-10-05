@@ -281,8 +281,17 @@ class Verifier:
             else "Demo ledger: tamper-evident but run by a single party (no independent peers).",
         }
 
-    async def verified_batch_count(self, s: AsyncSession) -> int:
-        ids = (await s.execute(select(Batch.shipment_id).distinct())).scalars().all()
+    async def verified_batch_count(
+        self, s: AsyncSession, shipment_ids: list[str] | None = None
+    ) -> int:
+        """Verified batches across `shipment_ids` (default: every shipment with batches).
+
+        The fleet overview passes only the active shipments: verifying all history on every page load
+        does not scale (hundreds of shipments stalled the API).
+        """
+        if shipment_ids is None:
+            shipment_ids = (await s.execute(select(Batch.shipment_id).distinct())).scalars().all()
+        ids = shipment_ids
         total = 0
         for sid in ids:
             r = await self.cached(s, sid)

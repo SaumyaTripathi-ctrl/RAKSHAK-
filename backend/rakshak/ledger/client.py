@@ -98,19 +98,48 @@ class LocalLedger(LedgerClient):
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
         self._lock = asyncio.Lock()
+        self._cache: list[dict] | None = None
+        self._cache_sig: tuple[int, int] | None = None
+        self._integrity_cache: tuple[tuple[int, int] | None, LedgerIntegrity] | None = None
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
+    def _sig(self) -> tuple[int, int] | None:
+        try:
+            st = self.path.stat()
+        except OSError:
+            return None
+        return st.st_size, st.st_mtime_ns
+
     def _read_all(self) -> list[dict]:
-        if not self.path.exists():
+        """Parsed rows, cached while the file is unchanged (size + mtime). Callers must not mutate the list.
+
+        Without the cache every submit re-parsed the whole file on the event loop (O(n) per entry, so the API
+        stalled once the ledger reached ~10k entries). An external edit changes the signature and is re-read,
+        so tamper detection is unaffected.
+        """
+        sig = self._sig()
+        if sig is None:
             return []
+        if self._cache is not None and self._cache_sig == sig:
+            return self._cache
         with self.path.open("r", encoding="utf-8") as f:
-            return [json.loads(line) for line in f if line.strip()]
+            rows = [json.loads(line) for line in f if line.strip()]
+        self._cache, self._cache_sig = rows, sig
+        self._integrity_cache = None
+        return rows
 
     def _append(self, row: dict) -> None:
+        had_cache = self._cache is not None and self._cache_sig == self._sig()
         with self.path.open("a", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n")
             f.flush()
             os.fsync(f.fileno())
+        if had_cache:  # keep the cache in step with our own append
+            self._cache.append(row)
+            self._cache_sig = self._sig()
+            self._integrity_cache = None
+        else:
+            self._cache = None
 
     @staticmethod
     def _to_entry(row: dict) -> LedgerEntry:
@@ -171,8 +200,9 @@ class LocalLedger(LedgerClient):
     async def list(self, limit: int = 100, offset: int = 0) -> list[LedgerEntry]:
         async with self._lock:
             rows = self._read_all()
-        rows.reverse()
-        return [self._to_entry(r) for r in rows[offset : offset + limit]]
+        hi = len(rows) - offset
+        lo = max(0, hi - limit)
+        return [self._to_entry(r) for r in reversed(rows[lo:hi])] if hi > 0 else []
 
     async def integrity(self) -> LedgerIntegrity:
         async with self._lock:
@@ -180,6 +210,16 @@ class LocalLedger(LedgerClient):
                 rows = self._read_all()
             except (ValueError, OSError) as exc:
                 return LedgerIntegrity(False, 0, f"ledger file unreadable: {exc}")
+            sig = self._cache_sig
+            if self._integrity_cache and self._integrity_cache[0] == sig:
+                return self._integrity_cache[1]
+        result = self._check_chain(rows)
+        if result.ok:
+            self._integrity_cache = (sig, result)
+        return result
+
+    @staticmethod
+    def _check_chain(rows: list[dict]) -> LedgerIntegrity:
         prev = ZERO
         for i, r in enumerate(rows):
             if r.get("index") != i:

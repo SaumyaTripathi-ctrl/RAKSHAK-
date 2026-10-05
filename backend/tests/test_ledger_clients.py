@@ -106,3 +106,21 @@ def test_factory(tmp_path):
         make_ledger("fabric", path="")
     with pytest.raises(ValueError):
         make_ledger("nope", path="")
+
+
+async def test_local_ledger_cache_does_not_hide_external_edits(tmp_path):
+    """The row cache must follow our own appends but still notice any outside change to the file."""
+    path = tmp_path / "l.jsonl"
+    led = LocalLedger(path)
+    for i in range(5):
+        await led.submit("BATCH", {"n": i})
+    assert (await led.integrity()).ok
+    # our own appends keep the cache warm (no re-read) and the chain valid
+    assert (await led.integrity()).entries == 6
+    # an attacker edits a stored payload in place (same length, so only mtime may change)
+    text = path.read_text(encoding="utf-8")
+    path.write_text(text.replace('{"n":2}', '{"n":9}'), encoding="utf-8", newline="\n")
+    integ = await led.integrity()
+    assert not integ.ok and "content does not match" in integ.problem
+    # a second ledger object over the same file agrees
+    assert not (await LocalLedger(path).integrity()).ok
