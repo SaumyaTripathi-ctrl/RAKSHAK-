@@ -213,6 +213,17 @@ export interface FleetTruck {
   backlog: number;
   origin: string;
   destination: string;
+  origin_lat?: number | null;
+  origin_lon?: number | null;
+  dest_lat?: number | null;
+  dest_lon?: number | null;
+}
+export interface RoadRoute {
+  distance_km: number;
+  duration_min: number;
+  source: string;
+  status: string;
+  geometry: [number, number][] | null;
 }
 export interface FleetOverview {
   kpis: { active_shipments: number; at_risk: number; offline_hubs: number; verified_batches: number };

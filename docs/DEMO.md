@@ -10,6 +10,9 @@ scripts\demo.ps1        # scripted run: drives the API, prints a milestone check
 Linux/macOS: `make up`, `make demo`. Open <http://localhost:8080>, log in with a demo-account button (Admin), and open the
 shipment the script prints. `python tools/demo.py --accel 120` is the default speed; `--restore` undoes the tamper.
 
+On a fresh database the simulator first backfills five finished trips on named Maharashtra routes (Ratnagiri-Pune,
+Nashik-Mumbai, Kolhapur-Pune, ...), then three live trucks start driving real roads. Open the Fleet page to see them move.
+
 | # | What happens | Where to look |
 |---|---|---|
 | 1 | Live mango shipment, tags + hub reporting, ledger anchoring batches | Fleet map, Shipment detail (temperature, humidity, ethylene) |

@@ -8,6 +8,8 @@ from typing import Protocol
 
 import httpx
 
+from .routes import route_for
+
 log = logging.getLogger("rakshak.sim.api")
 
 STAGE_USER = {  # who signs which hand-over (dev accounts from the seed data)
@@ -90,6 +92,8 @@ class HttpApi:
         origin=None,
         dest=None,
         weight_kg=1000.0,
+        origin_name=None,
+        dest_name=None,
         reuse=True,
     ) -> dict:
         """Reuse the hub's current open shipment (so the seeded ones come alive) or create a new one."""
@@ -104,14 +108,21 @@ class HttpApi:
                 )
                 r.raise_for_status()
                 return {**sh, "model_profile": profile}
+        if (
+            origin is None and dest is None
+        ):  # a created shipment always gets a real route (Ratnagiri -> Pune)
+            default = route_for(0)
+            origin, dest = default["origin"], default["dest"]
+            origin_name = origin_name or default["origin_name"]
+            dest_name = dest_name or default["dest_name"]
         body = {
             "food_type": food_type,
             "variety": "simulated",
             "weight_kg": weight_kg,
-            "origin_name": "Simulated origin",
+            "origin_name": origin_name or "Simulated origin",
             "origin_lat": origin[0] if origin else None,
             "origin_lon": origin[1] if origin else None,
-            "dest_name": "Simulated destination",
+            "dest_name": dest_name or "Simulated destination",
             "dest_lat": dest[0] if dest else None,
             "dest_lon": dest[1] if dest else None,
             "hub_id": hub_id,
@@ -140,6 +151,14 @@ class HttpApi:
 
     async def live(self, shipment_id: str) -> dict | None:
         r = await self._call("GET", f"/api/shipments/{shipment_id}/live")
+        return r.json() if r.status_code == 200 else None
+
+    async def route(self, a: tuple[float, float], b: tuple[float, float]) -> dict | None:
+        r = await self._call(
+            "GET",
+            "/api/route",
+            params={"from_lat": a[0], "from_lon": a[1], "to_lat": b[0], "to_lon": b[1]},
+        )
         return r.json() if r.status_code == 200 else None
 
     async def reroute(self, shipment_id: str) -> dict | None:

@@ -33,11 +33,28 @@
     "language": "Language",
     "theme": "Toggle light/dark theme",
     "logout": "Sign out",
-    "socket": { "connecting": "Connecting…", "open": "Live", "closed": "Reconnecting…" }
+    "socket": {
+      "connecting": "Connecting…",
+      "open": "Live",
+      "closed": "Reconnecting…"
+    }
   },
-  "roles": { "admin": "Administrator", "fpo": "FPO operator", "driver": "Driver", "exporter": "Exporter / buyer" },
-  "levels": { "SAFE": "SAFE", "WARNING": "WARNING", "CRITICAL": "CRITICAL" },
-  "status": { "CREATED": "Created", "IN_TRANSIT": "In transit", "DELIVERED": "Delivered" },
+  "roles": {
+    "admin": "Administrator",
+    "fpo": "FPO operator",
+    "driver": "Driver",
+    "exporter": "Exporter / buyer"
+  },
+  "levels": {
+    "SAFE": "SAFE",
+    "WARNING": "WARNING",
+    "CRITICAL": "CRITICAL"
+  },
+  "status": {
+    "CREATED": "Created",
+    "IN_TRANSIT": "In transit",
+    "DELIVERED": "Delivered"
+  },
   "foods": {
     "mango": "Mango",
     "banana": "Banana",
@@ -53,7 +70,11 @@
     "TRANSPORT": "Transport",
     "RETAIL": "Retail"
   },
-  "facility": { "cold_storage": "Cold storage", "fpo_packhouse": "FPO pack-house", "ripening_chamber": "Ripening chamber" },
+  "facility": {
+    "cold_storage": "Cold storage",
+    "fpo_packhouse": "FPO pack-house",
+    "ripening_chamber": "Ripening chamber"
+  },
   "login": {
     "subtitle": "Low-cost, offline-first farm-to-fork traceability",
     "username": "Username",
@@ -74,7 +95,7 @@
       "verifiedHint": "anchored on the ledger and re-checked"
     },
     "map": "Trucks",
-    "mapLegend": "Marker colour = spoilage risk (green safe, orange warning, red critical). A dashed ring means the hub is offline.",
+    "mapLegend": "Truck colour = spoilage risk (green safe, orange warning, red critical); a dashed ring means the hub is offline. Blue = road ahead, green = already driven, blue dot = origin, orange dot = destination.",
     "trucks": "Shipments on the road",
     "noTrucks": "No active shipments",
     "noTrucksHint": "Create a shipment or start a scenario in the simulator.",
@@ -145,7 +166,7 @@
     "title": "Route",
     "origin": "Origin",
     "destination": "Destination",
-    "legend": "Green trail = GPS track; grey dotted = travelled while offline; orange = recommended detour."
+    "legend": "Blue moving line = planned road route; green = already driven; grey dotted = driven while offline; orange = recommended detour. A and B mark origin and destination."
   },
   "sync": {
     "online": "Online",
@@ -251,7 +272,12 @@
     "seqRange": "Sequence",
     "records": "Records",
     "root": "Merkle root",
-    "batchStatus": { "verified": "verified ✓", "tampered": "tampered ✗", "pending": "pending", "ledger_unreachable": "ledger unreachable" },
+    "batchStatus": {
+      "verified": "verified ✓",
+      "tampered": "tampered ✗",
+      "pending": "pending",
+      "ledger_unreachable": "ledger unreachable"
+    },
     "unanchored": "Unanchored",
     "ledger": "Ledger",
     "multiParty": "multi-party",
@@ -338,7 +364,14 @@
     "runs": "Runs",
     "noRuns": "No runs yet",
     "noRunsHint": "Start a scenario above, or wait for the autoplay scenarios to appear.",
-    "state": { "created": "starting", "running": "running", "paused": "paused", "finished": "finished", "stopped": "stopped", "error": "error" },
+    "state": {
+      "created": "starting",
+      "running": "running",
+      "paused": "paused",
+      "finished": "finished",
+      "stopped": "stopped",
+      "error": "error"
+    },
     "pause": "Pause",
     "resume": "Resume",
     "stop": "Stop",

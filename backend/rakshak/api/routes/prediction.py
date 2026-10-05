@@ -166,3 +166,28 @@ async def set_model_profile(
     if pred is not None:
         pred.trackers.pop(shipment_id, None)  # rebuilt with the new model on the next sample
     return {"shipment_id": shipment_id, "model_profile": body.model_profile}
+
+
+@router.get("/api/route")
+async def road_route(
+    request: Request,
+    _: CurrentUser,
+    from_lat: float = Query(ge=-90, le=90),
+    from_lon: float = Query(ge=-180, le=180),
+    to_lat: float = Query(ge=-90, le=90),
+    to_lon: float = Query(ge=-180, le=180),
+) -> dict:
+    """Road geometry between two points (OSRM, cached) for maps and the simulator; straight line if unavailable."""
+    p = getattr(request.app.state, "predictor", None)
+    a, b = (from_lat, from_lon), (to_lat, to_lon)
+    if p is None:
+        d = haversine_km(a[0], a[1], b[0], b[1])
+        return {
+            "distance_km": round(d, 2),
+            "duration_min": round(d / 30 * 60, 1),
+            "source": "haversine",
+            "status": "estimated",
+            "geometry": [list(a), list(b)],
+            "note": "road routing unavailable; straight line",
+        }
+    return (await p.router.route(a, b)).to_dict()

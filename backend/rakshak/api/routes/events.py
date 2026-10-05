@@ -111,6 +111,10 @@ async def fleet_overview(session: Session, _: CurrentUser, request: Request) -> 
                 "temp_c": live["aggregates"]["temp_c"],
                 "backlog": hub.get("backlog", 0),
                 "origin": s.origin_name,
+                "origin_lat": s.origin_lat,
+                "origin_lon": s.origin_lon,
+                "dest_lat": s.dest_lat,
+                "dest_lon": s.dest_lon,
                 "destination": s.dest_name,
             }
         )

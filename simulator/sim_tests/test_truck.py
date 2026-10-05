@@ -299,3 +299,26 @@ def test_dataclass_defaults():
     milk, *_ = make_truck("milk")
     assert milk.phys.has_scrubber is False
     assert S.VERSION == 1
+
+
+def test_truck_drives_along_the_road_geometry_and_diverts_onto_a_new_one():
+    road = [(16.99, 73.31), (17.10, 73.60), (17.50, 73.65), (18.52, 73.86)]  # not a straight line
+    truck, _, _, _ = make_truck(path=road)
+    assert truck.position() == road[0]
+    truck.t = T0 + 120 * 60  # trip over
+    assert truck.position() == road[-1]
+    truck.t = (
+        T0 + 60 * 60
+    )  # halfway in time = halfway in distance: must sit on one of the road's segments
+    la, lo = truck.position()
+    on_road = any(
+        min(a[0], b[0]) - 1e-9 <= la <= max(a[0], b[0]) + 1e-9
+        and min(a[1], b[1]) - 1e-9 <= lo <= max(a[1], b[1]) + 1e-9
+        for a, b in zip(road, road[1:], strict=False)
+    )
+    assert on_road
+    detour = [(la, lo), (17.0, 73.5), (16.9, 73.4)]
+    truck.divert((16.9, 73.4), detour)
+    assert truck.position() == (la, lo)
+    truck.t += 3 * 3600
+    assert truck.position() == (16.9, 73.4)

@@ -1,5 +1,5 @@
 // react-query hooks: one place for every endpoint the UI uses.
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { del, get, post, publicGet, put } from "./api";
 import type {
@@ -12,6 +12,7 @@ import type {
   Live,
   PublicDoc,
   RerouteDoc,
+  RoadRoute,
   RiskPointDto,
   Shipment,
   SimRun,
@@ -22,7 +23,7 @@ import type {
 } from "./types";
 
 export const useFleet = () =>
-  useQuery({ queryKey: ["fleet"], queryFn: () => get<FleetOverview>("/api/fleet/overview"), refetchInterval: 20_000 });
+  useQuery({ queryKey: ["fleet"], queryFn: () => get<FleetOverview>("/api/fleet/overview"), refetchInterval: 6_000 });
 
 export const useShipments = () =>
   useQuery({ queryKey: ["shipments"], queryFn: () => get<Shipment[]>("/api/shipments"), refetchInterval: 30_000 });
@@ -252,3 +253,29 @@ export function useSetProfile(id: string) {
     },
   });
 }
+
+export type RoutePair = { key: string; from: [number, number]; to: [number, number] };
+
+const routeUrl = (from: [number, number], to: [number, number]) =>
+  `/api/route?from_lat=${from[0]}&from_lon=${from[1]}&to_lat=${to[0]}&to_lon=${to[1]}`;
+
+/** Road geometry for several origin/destination pairs (cached for the session; the backend caches too). */
+export function useRoutes(pairs: RoutePair[]) {
+  const results = useQueries({
+    queries: pairs.map((p) => ({
+      queryKey: ["route", p.from, p.to],
+      queryFn: () => get<RoadRoute>(routeUrl(p.from, p.to)),
+      staleTime: Infinity,
+      retry: 1,
+    })),
+  });
+  const out: Record<string, [number, number][]> = {};
+  pairs.forEach((p, i) => {
+    const g = results[i]?.data?.geometry;
+    if (g && g.length >= 2) out[p.key] = g;
+  });
+  return out;
+}
+
+export const useRoute = (from: [number, number] | null, to: [number, number] | null) =>
+  useRoutes(from && to ? [{ key: "r", from, to }] : []).r ?? null;

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 
 from ...db.base import utcnow
 from ...db.models import (
@@ -25,6 +27,7 @@ from ..deps import CurrentUser, Session, SettingsDep, require_roles
 from ..schemas import BindRequest, HandoverCreate, HandoverOut, ShipmentCreate, ShipmentOut
 
 router = APIRouter(prefix="/api/shipments", tags=["shipments"])
+_CREATE_LOCK = asyncio.Lock()
 
 Manager = Annotated[User, Depends(require_roles(Role.ADMIN.value, Role.FPO.value))]
 
@@ -71,18 +74,30 @@ async def create_shipment(
     body: ShipmentCreate, session: Session, user: Manager, request: Request
 ) -> Shipment:
     yy = utcnow().strftime("%y")
-    n = (await session.execute(select(func.count()).select_from(Shipment))).scalar_one() + 1
-    sid = f"RKS-{yy}-{n:06d}"
-    while await session.get(Shipment, sid) is not None:
-        n += 1
-        sid = f"RKS-{yy}-{n:06d}"
     data = body.model_dump(exclude={"tag_ids", "hub_id"})
-    shipment = Shipment(id=sid, created_by=user.username, **data)
-    session.add(shipment)
-    await session.flush()
-    await _bind(session, shipment, body.hub_id, body.tag_ids)
-    await session.commit()
-    return shipment
+    async with (
+        _CREATE_LOCK
+    ):  # ids are allocated as count+1: serialise, and still retry if another worker won the race
+        n = (await session.execute(select(func.count()).select_from(Shipment))).scalar_one() + 1
+        for _attempt in range(10):
+            sid = f"RKS-{yy}-{n:06d}"
+            while await session.get(Shipment, sid) is not None:
+                n += 1
+                sid = f"RKS-{yy}-{n:06d}"
+            shipment = Shipment(id=sid, created_by=user.username, **data)
+            session.add(shipment)
+            try:
+                await session.flush()
+            except IntegrityError:
+                await session.rollback()
+                n += 1
+                continue
+            await _bind(session, shipment, body.hub_id, body.tag_ids)
+            await session.commit()
+            return shipment
+    raise HTTPException(
+        status.HTTP_503_SERVICE_UNAVAILABLE, "could not allocate a shipment id, retry"
+    )
 
 
 @router.get("/{shipment_id}", response_model=ShipmentOut)

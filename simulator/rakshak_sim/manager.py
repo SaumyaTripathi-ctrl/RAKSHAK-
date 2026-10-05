@@ -119,6 +119,8 @@ class RunManager:
         tag_ids: list[str] | None = None,
         origin: tuple[float, float] | None = None,
         dest: tuple[float, float] | None = None,
+        origin_name: str | None = None,
+        dest_name: str | None = None,
     ) -> Run:
         sc = get_scenario(scenario) if isinstance(scenario, str) else scenario
         hub_id = hub_id or next((h for h in DEFAULT_TAGS if not self._busy(h)), "HUB-0001")
@@ -141,6 +143,8 @@ class RunManager:
                 profile=profile,
                 origin=origin or sc.origin,
                 dest=dest or sc.dest,
+                origin_name=origin_name,
+                dest_name=dest_name,
                 reuse=not new_shipment,
             )
             shipment_id = shipment["id"]
@@ -153,6 +157,17 @@ class RunManager:
         o = origin or sc.origin or _pt(shipment, "origin") or (16.9902, 73.3120)
         d = dest or sc.dest or _pt(shipment, "dest") or (18.5204, 73.8567)
         physics = dict(sc.physics)
+        path = None
+        route_fn = getattr(self.api, "route", None)
+        if (
+            route_fn is not None
+        ):  # road geometry so the truck drives the real road, not a ruler line
+            try:
+                doc = await route_fn(o, d)
+                geom = (doc or {}).get("geometry") or []
+                path = [(p[0], p[1]) for p in geom] if len(geom) >= 2 else None
+            except Exception:  # routing is cosmetic: never block a run on it
+                path = None
 
         for dev_id in (hub_id, *tags):
             resume = await self._resume_state(dev_id)
@@ -175,6 +190,7 @@ class RunManager:
             ambient=sc.ambient if sc.ambient is not None else band.mid_temp + 1.0,
             has_pcm=sc.has_pcm,
             has_scrubber=sc.has_scrubber,
+            path=path,
         )
         truck = VirtualTruck(cfg, self._uplink(hub_id), self.store)
         run = Run(sc, truck, shipment_id, self.api, accel=accel or self.s.accel or sc.accel)

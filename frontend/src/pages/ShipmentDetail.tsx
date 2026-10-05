@@ -34,6 +34,7 @@ import {
   useFoodTypes,
   useLive,
   useReroute,
+  useRoute,
   useRiskHistory,
   useSendCommand,
   useShipment,
@@ -73,6 +74,10 @@ export default function ShipmentDetail() {
   const band = foods.data?.find((f) => f.food_type === shipment.data?.food_type);
   const risky = live.data?.risk?.level === "CRITICAL" || !!live.data?.risk?.reroute;
   const reroute = useReroute(id, risky);
+  const sh = shipment.data;
+  const originPt: [number, number] | null = sh && sh.origin_lat != null && sh.origin_lon != null ? [sh.origin_lat, sh.origin_lon] : null;
+  const destPt: [number, number] | null = sh && sh.dest_lat != null && sh.dest_lon != null ? [sh.dest_lat, sh.dest_lon] : null;
+  const roadRoute = useRoute(originPt, destPt);
 
   const detours = useMemo<{ main: Detour | null; alts: Detour[] }>(() => {
     const doc = reroute.data;
@@ -288,12 +293,15 @@ export default function ShipmentDetail() {
           <CardContent>
             <ShipmentMap
               resetKey={s.id}
-              height={320}
+              height={420}
               trucks={trucks}
               trail={tl?.gps}
               offline={tl?.offline_segments}
-              origin={s.origin_lat != null && s.origin_lon != null ? [s.origin_lat, s.origin_lon] : null}
-              dest={s.dest_lat != null && s.dest_lon != null ? [s.dest_lat, s.dest_lon] : null}
+              origin={originPt}
+              dest={destPt}
+              originName={s.origin_name}
+              destName={s.dest_name}
+              route={roadRoute}
               detour={detours.main}
               alternatives={detours.alts}
             />

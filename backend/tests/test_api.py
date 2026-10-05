@@ -289,3 +289,15 @@ def test_websocket_live_push(tmp_path):
             app.state.realtime.publish({"type": "event", "data": {"x": 2}}, SHIP)
             msg = ws.receive_json()
             assert msg == {"type": "event", "data": {"x": 2}}
+
+
+async def test_concurrent_shipment_creation_gets_unique_ids(client, admin):
+    """Several clients creating shipments at once must all succeed with distinct ids (was a 500 on id collision)."""
+    import asyncio
+
+    body = {"food_type": "mango", "weight_kg": 10, "model_profile": "real"}
+    rs = await asyncio.gather(
+        *[client.post("/api/shipments", json=body, headers=admin) for _ in range(8)]
+    )
+    assert [r.status_code for r in rs] == [201] * 8
+    assert len({r.json()["id"] for r in rs}) == 8

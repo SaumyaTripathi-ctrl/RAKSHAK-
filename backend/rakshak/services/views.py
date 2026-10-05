@@ -24,15 +24,14 @@ def _downsample(rows: list, limit: int) -> list:
     return [rows[int(i * step)] for i in range(limit)] + [rows[-1]]
 
 
-async def _latest_sample(session: AsyncSession, device_id: str) -> Record | None:
-    return (
-        await session.execute(
-            select(Record)
-            .where(Record.device_id == device_id, Record.rtype.in_((1, 2)))
-            .order_by(Record.seq.desc())
-            .limit(1)
-        )
-    ).scalar_one_or_none()
+async def _latest_sample(
+    session: AsyncSession, device_id: str, shipment_id: str | None = None
+) -> Record | None:
+    """Newest hub/tag sample of a device, scoped to one shipment (a hub is reused across trips)."""
+    q = select(Record).where(Record.device_id == device_id, Record.rtype.in_((1, 2)))
+    if shipment_id is not None:
+        q = q.where(Record.shipment_id == shipment_id)
+    return (await session.execute(q.order_by(Record.seq.desc()).limit(1))).scalar_one_or_none()
 
 
 def device_dict(d: Device) -> dict:
@@ -51,13 +50,30 @@ def device_dict(d: Device) -> dict:
 
 
 async def shipment_devices(session: AsyncSession, shipment: Shipment) -> list[Device]:
-    q = select(Device).where(Device.shipment_id == shipment.id).order_by(Device.id)
-    devices = list((await session.execute(q)).scalars())
-    if shipment.hub_id and all(d.id != shipment.hub_id for d in devices):
-        hub = await session.get(Device, shipment.hub_id)
-        if hub:
-            devices.append(hub)
-    return devices
+    """Devices that reported for this shipment, plus (while it is open) the ones currently bound to it.
+
+    A finished shipment must keep showing *its* devices and history even after the hub and tags were
+    re-bound to the next trip.
+    """
+    ids = set(
+        (
+            await session.execute(
+                select(Record.device_id).where(Record.shipment_id == shipment.id).distinct()
+            )
+        ).scalars()
+    )
+    if shipment.status != "DELIVERED":
+        ids |= set(
+            (
+                await session.execute(select(Device.id).where(Device.shipment_id == shipment.id))
+            ).scalars()
+        )
+        if shipment.hub_id:
+            ids.add(shipment.hub_id)
+    if not ids:
+        return []
+    q = select(Device).where(Device.id.in_(ids)).order_by(Device.id)
+    return list((await session.execute(q)).scalars())
 
 
 async def shipment_live(session: AsyncSession, shipment: Shipment) -> dict:
@@ -65,7 +81,7 @@ async def shipment_live(session: AsyncSession, shipment: Shipment) -> dict:
     hub_dev = next((d for d in devices if d.kind == "hub"), None)
     hub = None
     if hub_dev is not None:
-        r = await _latest_sample(session, hub_dev.id)
+        r = await _latest_sample(session, hub_dev.id, shipment.id)
         hub = {
             **device_dict(hub_dev),
             "time_utc": rec_time(r) if r else None,
@@ -82,7 +98,11 @@ async def shipment_live(session: AsyncSession, shipment: Shipment) -> dict:
             last_fix = (
                 await session.execute(
                     select(Record)
-                    .where(Record.device_id == hub_dev.id, Record.lat.is_not(None))
+                    .where(
+                        Record.device_id == hub_dev.id,
+                        Record.shipment_id == shipment.id,
+                        Record.lat.is_not(None),
+                    )
                     .order_by(Record.seq.desc())
                     .limit(1)
                 )
@@ -93,7 +113,7 @@ async def shipment_live(session: AsyncSession, shipment: Shipment) -> dict:
     for d in devices:
         if d.kind != "tag":
             continue
-        r = await _latest_sample(session, d.id)
+        r = await _latest_sample(session, d.id, shipment.id)
         tags.append(
             {
                 **device_dict(d),

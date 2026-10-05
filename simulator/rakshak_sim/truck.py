@@ -66,6 +66,18 @@ class TruckConfig:
     )
     has_pcm: bool = True
     has_scrubber: bool | None = None  # default: installed for ethylene-sensitive foods
+    path: list[tuple[float, float]] | None = None  # road geometry origin->dest; None = gentle curve
+
+
+def _prep_path(path):
+    """(points, cumulative km) for a polyline, or None when it is unusable."""
+    if not path or len(path) < 2:
+        return None
+    pts = [(float(p[0]), float(p[1])) for p in path]
+    cum = [0.0]
+    for a, b in zip(pts, pts[1:], strict=False):
+        cum.append(cum[-1] + haversine_km(a, b))
+    return (pts, cum) if cum[-1] > 0 else None
 
 
 class SimTag:
@@ -153,6 +165,7 @@ class VirtualTruck:
 
         # position
         self._leg_origin, self._leg_dest = cfg.origin, cfg.dest
+        self._path = _prep_path(cfg.path)
         self._leg_start = cfg.start_epoch
         self._leg_minutes = cfg.trip_minutes or max(
             5.0, haversine_km(cfg.origin, cfg.dest) / AVG_SPEED_KMH * 60
@@ -166,14 +179,23 @@ class VirtualTruck:
 
     def position(self) -> tuple[float, float]:
         frac = min(max((self.t - self._leg_start) / 60.0 / self._leg_minutes, 0.0), 1.0)
+        if self._path:  # follow the road geometry by distance travelled
+            pts, cum = self._path
+            target = frac * cum[-1]
+            i = max(1, next((k for k, c in enumerate(cum) if c >= target), len(cum) - 1))
+            seg = cum[i] - cum[i - 1] or 1e-9
+            w = min(max((target - cum[i - 1]) / seg, 0.0), 1.0)
+            (a1, o1), (a2, o2) = pts[i - 1], pts[i]
+            return a1 + (a2 - a1) * w, o1 + (o2 - o1) * w
         (la1, lo1), (la2, lo2) = self._leg_origin, self._leg_dest
         lat, lon = la1 + (la2 - la1) * frac, lo1 + (lo2 - lo1) * frac
         bulge = 0.04 * math.sin(math.pi * frac)  # a gentle curve so the trail is not a ruler line
         return lat + bulge * (lo2 - lo1) / 3, lon - bulge * (la2 - la1) / 3
 
-    def divert(self, dest: tuple[float, float]) -> None:
-        """Follow a detour: new leg from the current position."""
+    def divert(self, dest: tuple[float, float], path=None) -> None:
+        """Follow a detour: new leg from the current position (along `path` if the road geometry is known)."""
         here = self.position()
+        self._path = _prep_path(path)
         self._leg_origin, self._leg_dest, self._leg_start = here, dest, self.t
         self._leg_minutes = max(5.0, haversine_km(here, dest) / AVG_SPEED_KMH * 60)
         self.note(f"diverting to {dest[0]:.3f},{dest[1]:.3f} ({self._leg_minutes:.0f} min)")

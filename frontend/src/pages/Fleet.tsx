@@ -11,7 +11,7 @@ import { EmptyState, ErrorState, LoadingBlock } from "@/components/States";
 import { StatCard } from "@/components/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fmt, humanFood } from "@/lib/format";
-import { useEvents, useFleet } from "@/lib/queries";
+import { useEvents, useFleet, useRoutes, type RoutePair } from "@/lib/queries";
 import { levelFromCode } from "@/lib/risk";
 
 export default function Fleet() {
@@ -20,11 +20,27 @@ export default function Fleet() {
   const fleet = useFleet();
   const events = useEvents();
 
+  // road routes for the most recent trucks (cached; the backend caches OSRM too)
+  const pairs: RoutePair[] = useMemo(
+    () =>
+      (fleet.data?.trucks ?? [])
+        .filter((x) => x.lat !== null && x.origin_lat != null && x.origin_lon != null && x.dest_lat != null && x.dest_lon != null)
+        .slice(-12)
+        .map((x) => ({ key: x.shipment_id, from: [x.origin_lat as number, x.origin_lon as number], to: [x.dest_lat as number, x.dest_lon as number] })),
+    [fleet.data],
+  );
+  const routes = useRoutes(pairs);
+
   const trucks: MapTruck[] = useMemo(
     () =>
       (fleet.data?.trucks ?? [])
         .filter((x) => x.lat !== null && x.lon !== null)
         .map((x) => ({
+          route: routes[x.shipment_id] ?? null,
+          origin: x.origin_lat != null && x.origin_lon != null ? ([x.origin_lat, x.origin_lon] as [number, number]) : null,
+          dest: x.dest_lat != null && x.dest_lon != null ? ([x.dest_lat, x.dest_lon] as [number, number]) : null,
+          originName: x.origin,
+          destName: x.destination,
           id: x.shipment_id,
           lat: x.lat as number,
           lon: x.lon as number,
@@ -34,7 +50,7 @@ export default function Fleet() {
           offline: x.online === false,
           onClick: () => nav(`/shipments/${x.shipment_id}`),
         })),
-    [fleet.data, nav, t],
+    [fleet.data, nav, t, routes],
   );
 
   return (
@@ -75,7 +91,7 @@ export default function Fleet() {
                   <CardTitle>{t("fleet.map")}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ShipmentMap trucks={trucks} resetKey="fleet" height={420} />
+                  <ShipmentMap trucks={trucks} resetKey={`fleet-${trucks.filter((x) => x.dest).length}`} height={480} />
                   <p className="mt-2 text-xs text-muted-foreground">{t("fleet.mapLegend")}</p>
                 </CardContent>
               </Card>

@@ -176,3 +176,20 @@ serial `CMD <json>`; all three feed one queue and acks are published when 4G is 
 
 **D-056 PlatformIO:** pioarduino platform (Arduino-ESP32 3.x), NimBLE-Arduino 2.x, own MPU6050 driver and LEDC servo
 (no third-party MPU/servo libraries).
+
+## Demo realism and scale (final pass)
+
+**D-057 Trucks follow real roads.** `GET /api/route` (OSRM via the cached router, straight-line fallback) gives road
+geometry; the simulator drives its virtual truck along it (and along the AI detour's geometry after an accepted reroute).
+The dashboard draws the planned route (animated blue), the part already driven (green), A/B or origin/destination dots,
+and trucks glide between GPS updates. All of it degrades to straight lines if OSRM is unreachable.
+
+**D-058 Demo history is backfilled.** On a database with fewer than 8 shipments, the simulator first replays five finished
+trips (normal, heat, banana ripening, critical + reroute, rural no-network) at high speed on named Maharashtra routes
+(`simulator/rakshak_sim/routes.py`), so QR pages, custody, ledger and alerts are never empty. `SIM_BACKFILL=false` disables it.
+
+**D-059 A finished shipment keeps its own devices and history.** Live views are scoped by `Record.shipment_id`; hubs and
+tags are re-bound to the next trip, and the old shipment must not show the hub's current position.
+
+**D-060 Scale fixes found by soak-testing:** the local ledger caches parsed rows (size+mtime signature, so outside edits
+are still detected); the fleet overview verifies only active shipments; shipment ids are allocated under a lock with retry.

@@ -217,7 +217,16 @@ class Run:
             return
         fac = best["facility"]
         await self.api.accept_reroute(self.shipment_id, fac["id"])
-        self.truck.divert((fac["lat"], fac["lng"]))
+        path = best.get("geometry")
+        if not path:
+            route_fn = getattr(self.api, "route", None)
+            if route_fn is not None:
+                here = self.truck.position()
+                try:
+                    path = ((await route_fn(here, (fac["lat"], fac["lng"]))) or {}).get("geometry")
+                except Exception:
+                    path = None
+        self.truck.divert((fac["lat"], fac["lng"]), path)
         self.truck.note(f"driver accepted the detour to {fac['name']}")
         self.diverted = True
         self.follow_reroute = False
