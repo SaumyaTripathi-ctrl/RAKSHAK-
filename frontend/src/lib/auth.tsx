@@ -3,7 +3,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { Navigate, useLocation } from "react-router-dom";
 
 import { AUTH_EXPIRED_EVENT, get, getToken, post, setToken } from "./api";
-import { setLanguage, type LangCode } from "./i18n";
 import type { Role, User } from "./types";
 
 interface AuthCtx {
@@ -48,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await post<{ access_token: string; user: User }>("/api/auth/login", { username, password });
       setToken(res.access_token);
       setUser(res.user);
-      if (res.user.language === "hi" || res.user.language === "en") setLanguage(res.user.language as LangCode);
       qc.clear();
       return res.user;
     },

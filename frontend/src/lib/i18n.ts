@@ -19,7 +19,7 @@ function initialLanguage(): LangCode {
   } catch {
     /* ignore */
   }
-  return typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("hi") ? "hi" : "en";
+  return "en"; // English by default everywhere; Hindi only when the user picks it
 }
 
 void i18n.use(initReactI18next).init({

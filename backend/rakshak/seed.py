@@ -19,8 +19,8 @@ log = logging.getLogger("rakshak.seed")
 DEMO_USERS = [
     # username, password, role, full name, organisation, language
     ("admin", "admin123", Role.ADMIN, "Asha Admin", "Rakshak Ops", "en"),
-    ("fpo", "fpo123", Role.FPO, "Ramesh Patil", "Konkan Hapus FPO (demo)", "hi"),
-    ("driver", "driver123", Role.DRIVER, "Sunil Jadhav", "Sahyadri Transport (demo)", "hi"),
+    ("fpo", "fpo123", Role.FPO, "Ramesh Patil", "Konkan Hapus FPO (demo)", "en"),
+    ("driver", "driver123", Role.DRIVER, "Sunil Jadhav", "Sahyadri Transport (demo)", "en"),
     ("exporter", "exporter123", Role.EXPORTER, "Meera Shah", "Fresh Exports Ltd (demo)", "en"),
 ]
 
