@@ -51,7 +51,8 @@ sync -> CRITICAL -> reroute -> tamper -> Verify says TAMPERED -> QR page); see `
 ## Tests
 
 `scripts\test.ps1` / `make test`: pytest (backend, ML, simulator), host C tests (codec vectors, ring/device, edge rules),
-frontend (vitest, tsc, eslint). Firmware builds: `pio run -d firmware/tag_esp32c3` and `-d firmware/hub_esp32s3`.
+frontend (vitest, tsc, eslint). The real-broker integration tests run when Mosquitto is up on localhost:8883; stop the simulator first
+(`docker compose stop simulator`) because it publishes as the same hubs. Firmware builds: `pio run -d firmware/tag_esp32c3` and `-d firmware/hub_esp32s3`.
 
 ## Cross-language correctness
 
