@@ -6,6 +6,7 @@ import { Fragment, useEffect, useMemo, useRef } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 
+import { useTheme } from "@/lib/theme";
 import { riskHex } from "@/lib/risk";
 import type { Facility, OfflineSegment } from "@/lib/types";
 
@@ -137,14 +138,16 @@ export function splitRoute(route: LL[], pos: LL): [LL[], LL[]] {
 }
 
 function RouteLayers({ route, pos, label }: { route: LL[]; pos?: LL | null; label?: string }) {
+  const { resolved } = useTheme();
+  const dark = resolved === "dark";
   const [done, ahead] = pos ? splitRoute(route, pos) : [[], route];
   return (
     <>
-      <Polyline positions={route} pathOptions={{ color: "#ffffff", weight: 9, opacity: 0.85 }} interactive={false} />
-      <Polyline positions={ahead} className="route-flow" pathOptions={{ color: "#1F6FEB", weight: 5, opacity: 0.9 }}>
+      <Polyline positions={route} pathOptions={{ color: dark ? "#0b1220" : "#ffffff", weight: 9, opacity: dark ? 0.9 : 0.85 }} interactive={false} />
+      <Polyline positions={ahead} className="route-flow" pathOptions={{ color: dark ? "#60A5FA" : "#1F6FEB", weight: 5, opacity: 0.95 }}>
         {label && <Tooltip sticky>{label}</Tooltip>}
       </Polyline>
-      {done.length > 1 && <Polyline positions={done} pathOptions={{ color: "#2E7D32", weight: 6, opacity: 0.95 }} interactive={false} />}
+      {done.length > 1 && <Polyline positions={done} pathOptions={{ color: dark ? "#4ADE80" : "#2E7D32", weight: 6, opacity: 0.95 }} interactive={false} />}
     </>
   );
 }

@@ -17,9 +17,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
       const v = localStorage.getItem(KEY);
-      return v === "light" || v === "dark" ? v : "system";
+      return v === "light" || v === "dark" || v === "system" ? v : "dark"; // dark by default; the header toggle still switches
     } catch {
-      return "system";
+      return "dark";
     }
   });
   const resolved: "light" | "dark" = theme === "system" ? (systemPrefersDark() ? "dark" : "light") : theme;
@@ -31,8 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
     try {
-      if (t === "system") localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, t);
+      localStorage.setItem(KEY, t);
     } catch {
       /* ignore */
     }
