@@ -419,5 +419,31 @@
     "notFound": "No shipment found for {{id}}",
     "poweredBy": "Rakshak traceability",
     "demoNote": "Demo deployment: the data in this environment is simulated."
+  },
+  "roleHelp": {
+    "title": "What can this role do?",
+    "can": "Can",
+    "cannot": "Cannot",
+    "signedInAs": "Signed in as",
+    "admin": {
+      "short": "Runs the whole system",
+      "can": "Everything: create shipments, add/pair devices and rotate keys, send hub commands, accept reroutes, sign any hand-over stage, run Verify/anchor, use the Simulator and demo tamper tools.",
+      "cannot": "Nothing is blocked."
+    },
+    "fpo": {
+      "short": "Farm / pack-house side",
+      "can": "Create shipments, pair tags, send hub commands, accept reroutes, acknowledge alerts, anchor and verify, sign Farm, FPO, Pack-house and Cold-storage hand-overs.",
+      "cannot": "Add devices or rotate keys, use the Simulator and tamper tools."
+    },
+    "driver": {
+      "short": "On the truck",
+      "can": "See shipments and alerts, send hub commands (flap, fan, silence alarm), accept a reroute, acknowledge alerts, sign Transport and Cold-storage hand-overs.",
+      "cannot": "Create shipments, open Devices or the Simulator, anchor on the ledger."
+    },
+    "exporter": {
+      "short": "Buyer / read-mostly",
+      "can": "View journeys, risk, custody and the Verify page; sign Cold-storage and Retail hand-overs.",
+      "cannot": "Send commands, accept reroutes, acknowledge alerts, create shipments, open Devices or the Simulator."
+    }
   }
 }

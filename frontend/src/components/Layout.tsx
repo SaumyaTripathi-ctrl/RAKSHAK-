@@ -18,6 +18,7 @@ import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
+import { RoleCard } from "@/components/RoleCard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
@@ -41,13 +42,22 @@ const NAV: NavItem[] = [
   { to: "/custody", key: "nav.custody", icon: Route },
   { to: "/verify", key: "nav.verify", icon: ShieldCheck },
   { to: "/devices", key: "nav.devices", icon: Cpu, roles: ["admin", "fpo"] },
-  { to: "/simulator", key: "nav.simulator", icon: FlaskConical, roles: ["admin"] },
+  {
+    to: "/simulator",
+    key: "nav.simulator",
+    icon: FlaskConical,
+    roles: ["admin"],
+  },
 ];
 
 function Logo() {
   const { t } = useTranslation();
   return (
-    <Link to="/" className="flex items-center gap-2 font-bold tracking-tight" aria-label={t("app.name")}>
+    <Link
+      to="/"
+      className="flex items-center gap-2 font-bold tracking-tight"
+      aria-label={t("app.name")}
+    >
       <img src="/logo.svg" alt="" className="size-8" />
       <span className="text-lg">{t("app.name")}</span>
     </Link>
@@ -58,25 +68,31 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   return (
-    <nav className="flex flex-col gap-1" aria-label="Main">
-      {NAV.filter((n) => !n.roles || (user && n.roles.includes(user.role))).map((n) => (
-        <NavLink
-          key={n.to}
-          to={n.to}
-          end={n.end}
-          onClick={onNavigate}
-          className={({ isActive }) =>
-            cn(
-              "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted",
-              isActive && "bg-secondary text-secondary-foreground hover:bg-secondary",
-            )
-          }
-        >
-          <n.icon className="size-4" aria-hidden />
-          {t(n.key)}
-        </NavLink>
-      ))}
-    </nav>
+    <>
+      <nav className="flex flex-col gap-1" aria-label="Main">
+        {NAV.filter(
+          (n) => !n.roles || (user && n.roles.includes(user.role)),
+        ).map((n) => (
+          <NavLink
+            key={n.to}
+            to={n.to}
+            end={n.end}
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted",
+                isActive &&
+                  "bg-secondary text-secondary-foreground hover:bg-secondary",
+              )
+            }
+          >
+            <n.icon className="size-4" aria-hidden />
+            {t(n.key)}
+          </NavLink>
+        ))}
+      </nav>
+      <RoleCard />
+    </>
   );
 }
 
@@ -108,7 +124,17 @@ function Controls() {
         size="icon"
         aria-label={t("common.theme")}
         title={t("common.theme")}
-        onClick={() => setTheme(theme === "system" ? (resolved === "dark" ? "light" : "dark") : theme === "dark" ? "light" : "dark")}
+        onClick={() =>
+          setTheme(
+            theme === "system"
+              ? resolved === "dark"
+                ? "light"
+                : "dark"
+              : theme === "dark"
+                ? "light"
+                : "dark",
+          )
+        }
       >
         {resolved === "dark" ? <Sun /> : <Moon />}
       </Button>
@@ -128,12 +154,20 @@ export function Layout({ children }: { children?: ReactNode }) {
       <aside className="hidden w-60 shrink-0 flex-col gap-6 border-r bg-card p-4 md:flex">
         <Logo />
         <NavLinks />
-        <p className="mt-auto text-xs text-muted-foreground">{t("app.tagline")}</p>
+        <p className="mt-auto text-xs text-muted-foreground">
+          {t("app.tagline")}
+        </p>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex items-center gap-2 border-b bg-background/95 px-3 py-2 backdrop-blur sm:px-5">
-          <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menu" onClick={() => setOpen(true)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label="Menu"
+            onClick={() => setOpen(true)}
+          >
             <Menu />
           </Button>
           <div className="md:hidden">
@@ -145,15 +179,27 @@ export function Layout({ children }: { children?: ReactNode }) {
               title={t(`common.socket.${socket}`)}
               data-socket={socket}
             >
-              <Activity className={cn("size-4", socket === "open" ? "text-green-600" : "text-orange-500")} aria-hidden />
-              <span className="hidden sm:inline">{t(`common.socket.${socket}`)}</span>
+              <Activity
+                className={cn(
+                  "size-4",
+                  socket === "open" ? "text-green-600" : "text-orange-500",
+                )}
+                aria-hidden
+              />
+              <span className="hidden sm:inline">
+                {t(`common.socket.${socket}`)}
+              </span>
             </span>
             <Controls />
             {user && (
               <div className="flex items-center gap-2">
                 <div className="hidden text-right text-xs leading-tight lg:block">
-                  <div className="font-medium">{user.full_name || user.username}</div>
-                  <div className="text-muted-foreground">{t(`roles.${user.role}`)}</div>
+                  <div className="font-medium">
+                    {user.full_name || user.username}
+                  </div>
+                  <div className="text-muted-foreground">
+                    {t(`roles.${user.role}`)}
+                  </div>
                 </div>
                 <Button
                   variant="outline"

@@ -87,6 +87,13 @@ export default function Login() {
                   </Button>
                 ))}
               </div>
+              <ul className="mt-3 space-y-1 text-xs text-muted-foreground">
+                {DEMO.map((u) => (
+                  <li key={u}>
+                    <span className="font-semibold text-foreground">{t(`roles.${u}`)}</span> ({u}): {t(`roleHelp.${u}.short`)} · {t("roleHelp.cannot")}: {t(`roleHelp.${u}.cannot`)}
+                  </li>
+                ))}
+              </ul>
               <p className="mt-2 text-xs text-muted-foreground">{t("login.demoHint")}</p>
             </div>
           )}
