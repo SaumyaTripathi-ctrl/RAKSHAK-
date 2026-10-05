@@ -2,7 +2,7 @@
 
 **Low-cost IoT nodes with tamper-evident records for farm-to-fork traceability**
 
-[![CI](https://github.com/SaumyaTripathi-ctrl/RAKSHAK/actions/workflows/ci.yml/badge.svg)](https://github.com/SaumyaTripathi-ctrl/RAKSHAK/actions/workflows/ci.yml)
+[![CI](https://github.com/SaumyaTripathi-ctrl/RAKSHAK-/actions/workflows/ci.yml/badge.svg)](https://github.com/SaumyaTripathi-ctrl/RAKSHAK-/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/status-working%20prototype-orange)
 ![Hardware](https://img.shields.io/badge/firmware-compile--tested%2C%20not%20hardware--tested-lightgrey)
@@ -58,8 +58,8 @@ vectors are specified in [`firmware/common/spec/RECORD_SPEC.md`](firmware/common
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows: WSL2 backend) and Git.
 
 ```powershell
-git clone https://github.com/SaumyaTripathi-ctrl/RAKSHAK.git
-cd RAKSHAK
+git clone https://github.com/SaumyaTripathi-ctrl/RAKSHAK-.git
+cd RAKSHAK-
 scripts\up.ps1            # Windows;  Linux/macOS: make up   (or: docker compose up --build)
 ```
 
